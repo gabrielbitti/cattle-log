@@ -1,0 +1,81 @@
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+dist/*
+TEST*.xml
+
+# file: ~/.gitignore_global
+.DS_Store
+
+.idea
+.idea/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+.ideia
+*.py,cover
+cover/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+### VirtualEnv ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pip-selfcheck.json
+
+# Default ignored files
+/shelf/
+/workspace.xml
+
+# ---- Sonar
+.sonar
+
+# Ruff stuff:
+.ruff_cache/
+
+# PyPI configuration file
+.pypirc
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
+__pypackages__/

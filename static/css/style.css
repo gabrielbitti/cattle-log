@@ -1,0 +1,332 @@
+/* Apple-inspired Design - Basic Reset & Body */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+    color: #1d1d1f; /* Apple's primary text color */
+    background-color: #f5f5f7; /* Apple's light background */
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    color: #1d1d1f;
+    padding: 0.8rem 20px;
+    text-align: center;
+    border-bottom: 1px solid #d2d2d7; /* Subtle border */
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+}
+
+nav {
+    margin-top: 0.3rem;
+}
+
+nav a {
+    color: #007aff; /* Apple's blue link color */
+    text-decoration: none;
+    margin: 0 10px;
+    padding: 5px 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-size: 0.9rem;
+}
+
+nav a:hover {
+    color: #007aff;
+    text-decoration: underline;
+}
+
+/* Main Content Area */
+main {
+    flex-grow: 1;
+    max-width: 980px; /* Common Apple container width */
+    width: 90%;
+    margin: 30px auto;
+    padding: 0 10px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    margin-top: auto;
+    padding: 20px;
+    background-color: #f5f5f7;
+    color: #6e6e73; /* Apple's secondary text color */
+    font-size: 0.8rem;
+    border-top: 1px solid #d2d2d7;
+    width: 100%;
+}
+
+/* Dashboard Specific */
+.dashboard h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1d1d1f;
+    text-align: center;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 2.5rem;
+}
+
+.stat-card {
+    background: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 12px; /* More rounded corners */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h3 {
+    margin-bottom: 0.6rem;
+    color: #6e6e73;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.stat-card p {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: #1d1d1f;
+}
+
+/* Action Buttons / Links */
+.actions {
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.actions a.btn-add, button.btn-primary {
+    background-color: #007aff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    margin: 5px 10px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.actions a.btn-add:hover, button.btn-primary:hover {
+    background-color: #005ecb;
+}
+
+.actions a.btn-add:active, button.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* Content Sections (like lists, forms) */
+.content-section {
+    background: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.content-section h2, .content-section h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #1d1d1f;
+    text-align: center;
+}
+
+/* Form Styling */
+form label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #1d1d1f;
+}
+
+form input[type="text"],
+form input[type="number"],
+form input[type="date"],
+form select {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 1.2rem;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+form input[type="text"]:focus,
+form input[type="number"]:focus,
+form input[type="date"]:focus,
+form select:focus {
+    outline: none;
+    border-color: #007aff;
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+    background-color: #ffffff;
+}
+
+form small {
+    display: block;
+    margin-top: -0.8rem;
+    margin-bottom: 1rem;
+    color: #6e6e73;
+    font-size: 0.8rem;
+}
+
+form button[type="submit"] {
+    background-color: #007aff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    width: 100%;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+form button[type="submit"]:hover {
+    background-color: #005ecb;
+}
+
+form button[type="submit"]:active {
+    transform: scale(0.98);
+}
+
+.form-section p a {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #007aff;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.form-section p a:hover {
+    text-decoration: underline;
+}
+
+/* Table Styling (for listing page) */
+table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+}
+
+table.data-table th,
+table.data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5; /* Lighter border */
+    font-size: 0.9rem;
+}
+
+table.data-table th {
+    background-color: #f5f5f7;
+    font-weight: 600;
+    color: #1d1d1f;
+}
+
+table.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+table.data-table tr:hover {
+    background-color: #f5f5f7;
+}
+
+table.data-table td a {
+    color: #007aff;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+table.data-table td a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    header h1 { font-size: 1.3rem; }
+    nav a { margin: 0 5px; font-size: 0.8rem; }
+    main { width: 95%; margin-top: 20px; }
+    .dashboard h2 { font-size: 1.8rem; }
+    .stats { grid-template-columns: 1fr; gap: 15px; }
+    .stat-card { padding: 1.2rem; }
+    .stat-card p { font-size: 2rem; }
+    .actions a.btn-add, button.btn-primary { width: 90%; margin: 8px auto; }
+    .content-section { padding: 1.5rem; }
+    .content-section h2, .content-section h3 { font-size: 1.3rem; }
+    table.data-table th, table.data-table td { padding: 10px 8px; font-size: 0.85rem; }
+    /* Force table elements to display block-like */
+    table.data-table, table.data-table thead, table.data-table tbody, table.data-table th, table.data-table td, table.data-table tr {
+        display: block;
+    }
+    table.data-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    table.data-table tr {
+        border: 1px solid #d2d2d7;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        background: #fff;
+    }
+    table.data-table td {
+        border: none;
+        border-bottom: 1px solid #e5e5e5;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+    table.data-table td:before {
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label);
+        font-weight: 600;
+        text-align: left;
+    }
+    table.data-table td:last-child {
+        border-bottom: none;
+    }
+}
+
