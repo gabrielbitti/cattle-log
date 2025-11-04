@@ -1,6 +1,6 @@
 import uvicorn
 
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -33,7 +33,7 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
 
 @app.get("/add-cattle", response_class=HTMLResponse)
 async def add_cattle_form(request: Request):
-    return templates.TemplateResponse("add_cattle.html", {"request": request})
+    return templates.TemplateResponse("cattle_form.html", {"request": request, "action": "create"})
 
 @app.get("/add-birth", response_class=HTMLResponse)
 async def add_birth_form(request: Request):
@@ -44,16 +44,12 @@ async def list_cattle_page(request: Request, db: Session = Depends(get_db)):
     cattle_list = crud.get_all_cattle(db, limit=1000) # Fetch all cattle (adjust limit if needed)
     return templates.TemplateResponse("list_cattle.html", {"request": request, "cattle_list": cattle_list})
 
-# Placeholder for edit route (to be implemented in step 003)
 @app.get("/cattle/edit/{cattle_id}", response_class=HTMLResponse)
 async def edit_cattle_form(request: Request, cattle_id: int, db: Session = Depends(get_db)):
-    # Fetch cattle data - will be implemented later
-    # cattle_data = crud.get_cattle_by_id(db, cattle_id)
-    # if not cattle_data:
-    #     raise HTTPException(status_code=404, detail="Cattle not found")
-    # return templates.TemplateResponse("edit_cattle.html", {"request": request, "cattle": cattle_data})
-    # Temporary response until edit template is ready
-    return HTMLResponse(content=f"<html><body><h1>Edit Cattle ID: {cattle_id} - Page under construction</h1><a href='/cattle-list'>Back to list</a></body></html>")
+    cattle_data = crud.get_cattle_by_id(db, cattle_id)
+    if not cattle_data:
+        raise HTTPException(status_code=404, detail="Cattle not found")
+    return templates.TemplateResponse("cattle_form.html", {"request": request, "action": "edit", "cattle": cattle_data})
 
 @app.get("/health")
 def health_check():
