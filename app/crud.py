@@ -8,7 +8,7 @@ def get_cattle_by_id(db: Session, cattle_id: int):
     """Fetches a single cattle record by its ID."""
     return db.query(Cattle).filter(Cattle.id == cattle_id).first()
 
-def get_all_cattle(db: Session, skip: int = 0, limit: int = 1000):
+def get_all_cattle(db: Session, skip: int = 0, limit: int = 9999):
     """Fetches a list of cattle records, ordered by ID."""
     return db.query(Cattle).order_by(Cattle.id).offset(skip).limit(limit).all()
 

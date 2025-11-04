@@ -27,9 +27,24 @@ app.include_router(cattle.router)
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request, db: Session = Depends(get_db)):
-    # Fetch initial count for server-side rendering (JS will update anyway)
-    initial_count = crud.get_cattle_count(db)
-    return templates.TemplateResponse("index.html", {"request": request, "cattle_count": initial_count})
+    cow_count = 0
+    bull_count = 0
+
+    all_cattle = crud.get_all_cattle(db)
+    for _cattle in all_cattle:
+        if _cattle.type == "bull":
+            bull_count += 1
+        else:
+            cow_count += 1
+
+    data = dict(
+        request=request,
+        cattle_count=len(all_cattle),
+        cow_count=cow_count,
+        bull_count=bull_count,
+    )
+
+    return templates.TemplateResponse("index.html", data)
 
 @app.get("/add-cattle", response_class=HTMLResponse)
 async def add_cattle_form(request: Request):

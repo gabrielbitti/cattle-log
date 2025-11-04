@@ -3,31 +3,21 @@
 {% block title %}Dashboard - Auditoria de Rebanho{% endblock %}
 
 {% block content %}
-<section class="dashboard">
-    <h2>Visão Geral do Rebanho</h2>
-    <div class="stats">
-        <div class="stat-card">
-            <h3>Total de Gado</h3>
-            <h3 id="cattle-count">{{ cattle_count }}</h3> <!-- Data will be updated dynamically by JS -->
+    <section class="dashboard">
+        <h2>Dashboard</h2>
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total de Gado</h3>
+                <h3 id="cattle-count">{{ cattle_count }}</h3>
+            </div>
+            <div class="stat-card">
+                <h3>Total de Vacas</h3>
+                <h3 id="cow-count">{{ cow_count }}</h3>
+            </div>
+            <div class="stat-card">
+                <h3>Total de Bois</h3>
+                <h3 id="bull-count">{{ bull_count }}</h3>
+            </div>
         </div>
-        <!-- Add more stat cards as needed -->
-    </div>
-
-<!--    <div class="actions">-->
-<!--        <a href="/add-cattle" class="btn-add">Adicionar Gado</a>-->
-<!--        <a href="/add-birth" class="btn-add">Registrar Nascimento</a>-->
-<!--        <a href="/cattle-list" class="btn-add">Listar Gado</a>-->
-<!--    </div>-->
-
-    <!-- Placeholder for recent activity or other dashboard elements -->
-<!--    <div class="content-section">-->
-<!--        <h3>Atividade Recente</h3>-->
-<!--        <p>Funcionalidades adicionais do dashboard serão implementadas futuramente.</p>-->
-<!--    </div>-->
-</section>
+    </section>
 {% endblock %}
-
-{% block scripts_extra %}
-<!-- JS in script.js already handles updating the count -->
-{% endblock %}
-
