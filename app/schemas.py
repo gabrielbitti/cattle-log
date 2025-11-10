@@ -13,6 +13,7 @@ class CattleCreate(CattleBase):
     type: str = Field(..., pattern="^(cow|bull)$") # Ensure type is cow or bull
 
 class CattleUpdate(BaseModel):
+    name: Optional[str] = Field(None)
     weight: Optional[float] = Field(None, gt=0)
     birth_date: Optional[date] = None
     mother_id: Optional[int] = Field(None, gt=0)
