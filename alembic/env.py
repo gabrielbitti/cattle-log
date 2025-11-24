@@ -11,6 +11,9 @@ from app.settings import DATABASE_URL
 from app.database.db import Base
 
 from app.models import cattle
+from app.models import cattle_health
+from app.models import cattle_reproduction
+from app.models import cattle_weight
 
 
 # this is the Alembic Config object, which provides
