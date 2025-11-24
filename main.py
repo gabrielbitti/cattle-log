@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from app.database.db import engine, Base, get_db
+from app.models.cattle import GenderEnum
 from app.routers import cattle
 from app import crud, schemas # Import crud and schemas
 import os
@@ -32,7 +33,7 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
 
     all_cattle = crud.get_all_cattle(db)
     for _cattle in all_cattle:
-        if _cattle.type == "bull":
+        if _cattle.gender == GenderEnum.MALE.value:
             bull_count += 1
         else:
             cow_count += 1

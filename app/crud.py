@@ -17,8 +17,14 @@ def create_cattle(db: Session, cattle: schemas.CattleCreate):
     # Validate mother if provided
     if cattle.mother_id:
         mother = get_cattle_by_id(db, cattle.mother_id)
-        if not mother or mother.type != "cow":
-            raise ValueError(f"Vaca mãe com ID {cattle.mother_id} não encontrada ou não é uma vaca.")
+        if not mother or mother.gender != "FEMALE":
+            raise ValueError(f"Vaca mãe com ID {cattle.mother_id} não encontrada ou não é uma fêmea.")
+
+    # Validate father if provided
+    if cattle.father_id:
+        father = get_cattle_by_id(db, cattle.father_id)
+        if not father or father.gender != "MALE":
+            raise ValueError(f"Pai com ID {cattle.father_id} não encontrado ou não é um macho.")
 
     db_cattle = Cattle(**cattle.model_dump()) # Use model_dump for Pydantic v2
     db.add(db_cattle)
@@ -41,15 +47,23 @@ def update_cattle(db: Session, cattle_id: int, cattle_update: schemas.CattleUpda
         if update_data["mother_id"] == cattle_id:
              raise ValueError("Um animal não pode ser sua própria mãe.")
         mother = get_cattle_by_id(db, update_data["mother_id"])
-        if not mother or mother.type != "cow":
-            raise ValueError(f"Vaca mãe com ID {update_data['mother_id']} não encontrada ou não é uma vaca.")
+        if not mother or mother.gender != "FEMALE":
+            raise ValueError(f"Vaca mãe com ID {update_data['mother_id']} não encontrada ou não é uma fêmea.")
 
-    # Validate type change: prevent changing a mother cow to a bull
-    if "type" in update_data and update_data["type"] == "bull" and db_cattle.type == "cow":
-        # Check if this cow has any calves
+    # Validate father_id update
+    if "father_id" in update_data and update_data["father_id"] is not None:
+        if update_data["father_id"] == cattle_id:
+             raise ValueError("Um animal não pode ser seu próprio pai.")
+        father = get_cattle_by_id(db, update_data["father_id"])
+        if not father or father.gender != "MALE":
+            raise ValueError(f"Pai com ID {update_data['father_id']} não encontrado ou não é um macho.")
+
+    # Validate gender change: prevent changing a mother to male
+    if "gender" in update_data and update_data["gender"] == "MALE" and db_cattle.gender == "FEMALE":
+        # Check if this female has any calves
         has_calves = db.query(Cattle.id).filter(Cattle.mother_id == cattle_id).first() is not None
         if has_calves:
-            raise ValueError("Não é possível alterar o tipo para \'boi\' porque esta vaca já possui bezerros registrados.")
+            raise ValueError("Não é possível alterar o gênero para 'MALE' porque esta fêmea já possui bezerros registrados.")
     # --- End Validations ---
 
     # Apply updates
@@ -64,17 +78,28 @@ def update_cattle(db: Session, cattle_id: int, cattle_update: schemas.CattleUpda
 def create_birth(db: Session, birth: schemas.BirthCreate):
     """Registers a birth, creating a new calf linked to a mother cow."""
     mother = get_cattle_by_id(db, birth.mother_id)
-    if not mother or mother.type != "cow":
-        raise ValueError(f"Vaca mãe com ID {birth.mother_id} não encontrada ou não é uma vaca.")
+    if not mother or mother.gender != "FEMALE":
+        raise ValueError(f"Vaca mãe com ID {birth.mother_id} não encontrada ou não é uma fêmea.")
 
-    # Create the calf record (assuming type is 'bull' for now - needs clarification)
-    # TODO: Clarify how calf type (sex) should be determined upon birth registration.
+    # Validate father if provided
+    if birth.father_id:
+        father = get_cattle_by_id(db, birth.father_id)
+        if not father or father.gender != "MALE":
+            raise ValueError(f"Pai com ID {birth.father_id} não encontrado ou não é um macho.")
+
+    # Set default race from mother if not provided
+    calf_race = birth.race if birth.race else mother.race
+
+    # Create the calf record
     db_calf = Cattle(
         name=birth.name,
-        type=birth.type,
-        weight=birth.calf_weight,
-        birth_date=birth.calf_birth_date,
+        race=calf_race,
+        gender=birth.gender,
+        birth_date=birth.birth_date,
         mother_id=birth.mother_id,
+        father_id=birth.father_id,
+        notes=birth.notes,
+        status="ACTIVE"
     )
     db.add(db_calf)
     db.commit()

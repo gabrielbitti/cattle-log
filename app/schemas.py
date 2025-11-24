@@ -1,37 +1,56 @@
 from pydantic import BaseModel, Field
 from datetime import date
 from typing import Optional
+from decimal import Decimal
+from app.models.cattle import GenderEnum, StatusEnum
 
 class CattleBase(BaseModel):
-    weight: Optional[float] = Field(None, gt=0)
+    name: str
+    identification: Optional[str] = None
+    race: str
+    gender: GenderEnum
     birth_date: Optional[date] = None
+    acquisition_date: Optional[date] = None
+    acquisition_value: Optional[Decimal] = Field(None, ge=0)
+    status: Optional[StatusEnum] = StatusEnum.ACTIVE
     mother_id: Optional[int] = Field(None, gt=0)
-    type: str # \'cow\' or \'bull\'
+    father_id: Optional[int] = Field(None, gt=0)
+    origin: Optional[str] = None
+    notes: Optional[str] = None
 
 class CattleCreate(CattleBase):
-    name: str
-    type: str = Field(..., pattern="^(cow|bull)$") # Ensure type is cow or bull
+    pass
 
 class CattleUpdate(BaseModel):
-    name: Optional[str] = Field(None)
-    weight: Optional[float] = Field(None, gt=0)
+    name: Optional[str] = None
+    identification: Optional[str] = None
+    race: Optional[str] = None
+    gender: Optional[GenderEnum] = None
     birth_date: Optional[date] = None
+    acquisition_date: Optional[date] = None
+    acquisition_value: Optional[Decimal] = Field(None, ge=0)
+    status: Optional[StatusEnum] = None
     mother_id: Optional[int] = Field(None, gt=0)
-    type: Optional[str] = Field(None, pattern="^(cow|bull)$")
+    father_id: Optional[int] = Field(None, gt=0)
+    origin: Optional[str] = None
+    notes: Optional[str] = None
 
 class Cattle(CattleBase):
     id: int
+    created_at: date
+    updated_at: Optional[date] = None
 
     class Config:
-        from_attributes = True # For Pydantic v2
+        from_attributes = True
 
 class BirthCreate(BaseModel):
-    name:str
-    type: Optional[str] = Field(None, pattern="^(cow|bull)$")
-    calf_weight: Optional[float] = Field(None, gt=0)
-    calf_birth_date: date
+    name: str
+    gender: GenderEnum
+    birth_date: date
     mother_id: int = Field(..., gt=0)
+    father_id: Optional[int] = Field(None, gt=0)
+    race: Optional[str] = None
+    notes: Optional[str] = None
 
 class CattleCount(BaseModel):
     total_count: int
-

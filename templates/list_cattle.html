@@ -12,12 +12,14 @@
             <tr>
                 <th>#</th>
                 <th>Nome</th>
-                <th>Tipo</th>
+                <th>Identificação</th>
+                <th>Raça</th>
+                <th>Gênero</th>
                 <th>Data Nasc.</th>
-                <th>Peso (kg)</th>
+                <th>Status</th>
                 <th>ID Mãe</th>
+                <th>ID Pai</th>
                 <th>Criado em</th>
-                <th>Atualizado em</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -25,13 +27,15 @@
             {% for cattle in cattle_list %}
             <tr>
                 <td data-label="ID">{{ cattle.id }}</td>
-                <td data-label="Tipo">{{ cattle.name.capitalize() }}</td>
-                <td data-label="Tipo">{{ cattle.type.capitalize() }}</td>
+                <td data-label="Nome">{{ cattle.name.capitalize() }}</td>
+                <td data-label="Identificação">{{ cattle.identification if cattle.identification else "-" }}</td>
+                <td data-label="Raça">{{ cattle.race.capitalize() }}</td>
+                <td data-label="Gênero">{{ "Fêmea" if cattle.gender == "FEMALE" else "Macho" }}</td>
                 <td data-label="Data Nasc.">{{ cattle.birth_date if cattle.birth_date else "-" }}</td>
-                <td data-label="Peso (kg)">{{ "%.1f"|format(cattle.weight) if cattle.weight else "-" }}</td>
+                <td data-label="Status">{{ cattle.status.capitalize() if cattle.status else "Ativo" }}</td>
                 <td data-label="ID Mãe">{{ cattle.mother_id if cattle.mother_id else "-" }}</td>
+                <td data-label="ID Pai">{{ cattle.father_id if cattle.father_id else "-" }}</td>
                 <td data-label="Criado em">{{ cattle.created_at if cattle.created_at else "-" }}</td>
-                <td data-label="Atualizado em">{{ cattle.updated_at if cattle.updated_at else "-" }}</td>
                 <td data-label="Ações">
                     <a href="/cattle/edit/{{ cattle.id }}">Editar</a>
                     <!-- Add delete functionality later if needed -->
