@@ -10,13 +10,13 @@
     <h2>{% if action == 'create' %}Adicionar Novo Gado (Boi ou Vaca){% else %}Editar Gado (ID: {{ cattle.id }}){% endif %}</h2>
     <form id="cattle-form" action="/cattle/" method="post">
         <label for="name">Nome:</label>
-        <input type="text" id="name" name="name" value="{{ cattle.name }}" required>
+        <input type="text" id="name" name="name" value="{{ cattle.name if cattle else '' }}" required>
 
         <label for="identification">Identificação (Opcional):</label>
         <input type="text" id="identification" name="identification" value="{{ cattle.identification if cattle and cattle.identification else '' }}">
 
         <label for="race">Raça:</label>
-        <input type="text" id="race" name="race" value="{{ cattle.race }}" required>
+        <input type="text" id="race" name="race" value="{{ cattle.race if cattle else '' }}" required>
 
         <label for="gender">Gênero:</label>
         <select id="gender" name="gender" required>
