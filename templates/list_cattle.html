@@ -38,7 +38,9 @@
                 <td data-label="Criado em">{{ cattle.created_at if cattle.created_at else "-" }}</td>
                 <td data-label="Ações">
                     <a href="/cattle/edit/{{ cattle.id }}">Editar</a>
-                    <!-- Add delete functionality later if needed -->
+                    <a href="/add-cattle-weight/{{ cattle.id }}">Evoluir</a>
+                    <a href="/cattle/health/{{ cattle.id }}">Saúde</a>
+                    <a href="/cattle/reproduction/{{ cattle.id }}">Reprodução</a>
                 </td>
             </tr>
             {% endfor %}

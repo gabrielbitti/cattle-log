@@ -67,6 +67,23 @@ async def edit_cattle_form(request: Request, cattle_id: int, db: Session = Depen
         raise HTTPException(status_code=404, detail="Cattle not found")
     return templates.TemplateResponse("cattle_form.html", {"request": request, "action": "edit", "cattle": cattle_data})
 
+@app.get("/add-cattle-weight/{cattle_id}", response_class=HTMLResponse)
+async def add_cattle_weight_form(request: Request, cattle_id: int, db: Session = Depends(get_db)):
+    cattle_data = crud.get_cattle_by_id(db, cattle_id)
+    if not cattle_data:
+        raise HTTPException(status_code=404, detail="Cattle not found")
+    return templates.TemplateResponse("cattle_weight_form.html", {"request": request, "action": "create", "cattle": cattle_data})
+
+@app.get("/edit-cattle-weight/{weight_id}", response_class=HTMLResponse)
+async def edit_cattle_weight_form(request: Request, weight_id: int, db: Session = Depends(get_db)):
+    # Assumindo que você terá uma função para buscar peso por ID
+    # cattle_weight = crud.get_cattle_weight_by_id(db, weight_id)
+    # if not cattle_weight:
+    #     raise HTTPException(status_code=404, detail="Cattle weight record not found")
+    # cattle_data = crud.get_cattle_by_id(db, cattle_weight.cattle_id)
+    # return templates.TemplateResponse("cattle_weight_form.html", {"request": request, "action": "edit", "cattle": cattle_data, "cattle_weight": cattle_weight})
+    pass
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}

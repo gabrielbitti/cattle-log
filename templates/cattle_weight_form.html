@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if action == 'create' %}Registrar Peso{% else %}Editar Registro de Peso{% endif %} - Auditoria de Rebanho
+{% endblock %}
+
+{% block content %}
+
+<section class="content-section form-section">
+    <h2>{% if action == 'create' %}Registrar Novo Peso - {{ cattle.name }} (ID: {{ cattle.id }}){% else %}Editar Registro de Peso (ID: {{ cattle_weight.id }}){% endif %}</h2>
+    <form id="cattle-weight-form" action="/cattle-weight/" method="post">
+        <input type="hidden" id="cattle_id" name="cattle_id" value="{{ cattle.id }}">
+        
+        <label for="weight">Peso (kg):</label>
+        <input type="number" step="0.01" id="weight" name="weight" value="{{ cattle_weight.weight if cattle_weight else '' }}" required>
+
+        <label for="measurement_date">Data da Medição:</label>
+        <input type="date" id="measurement_date" name="measurement_date" value="{{ cattle_weight.measurement_date if cattle_weight else '' }}" required>
+
+        <label for="notes">Observações:</label>
+        <textarea id="notes" name="notes" rows="3">{{ cattle_weight.notes if cattle_weight and cattle_weight.notes else '' }}</textarea>
+
+        <button type="submit">
+            {% if action == 'create' %}Registrar Peso{% else %}Salvar Alterações{% endif %}
+        </button>
+    </form>
+    <p><a href="{% if action == 'create' %}/cattle-list{% else %}/cattle-weight/{{ cattle.id }}{% endif %}">
+        {% if action == 'create' %}Cancelar e Voltar para Lista{% else %}Cancelar e Voltar para Evolução{% endif %}
+    </a></p>
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    const cattleWeightForm = document.getElementById("cattle-weight-form");
+    const action = '{{ action }}';
+    const cattleWeightId = {% if cattle_weight %}'{{ cattle_weight.id }}'{% else %}null{% endif %};
+
+    if (cattleWeightForm) {
+        cattleWeightForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(cattleWeightForm);
+            const data = {
+                cattle_id: parseInt(formData.get("cattle_id")),
+                weight: parseFloat(formData.get("weight")),
+                measurement_date: formData.get("measurement_date"),
+                notes: formData.get("notes") || null
+            };
+
+            if (!data.notes) delete data.notes;
+
+            try {
+                let response;
+                if (action === 'create') {
+                    response = await fetch("/cattle-weight/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+                } else {
+                    response = await fetch(`/cattle-weight/${cattleWeightId}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (action === 'create') {
+                    alert(`Peso registrado com sucesso! ID: ${result.id}`);
+                    cattleWeightForm.reset();
+                } else {
+                    alert(`Registro de peso (ID: ${result.id}) atualizado com sucesso!`);
+                    window.location.href = `/cattle-weight/${data.cattle_id}`;
+                }
+            } catch (error) {
+                console.error("Erro ao processar registro de peso:", error);
+                alert(`Erro ao ${action === 'create' ? 'registrar' : 'atualizar'} peso: ${error.message}`);
+            }
+        });
+    }
+</script>
+{% endblock %}
