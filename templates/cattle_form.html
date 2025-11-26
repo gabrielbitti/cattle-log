@@ -10,13 +10,13 @@
     <h2>{% if action == 'create' %}Adicionar Novo Gado (Boi ou Vaca){% else %}Editar Gado (ID: {{ cattle.id }}){% endif %}</h2>
     <form id="cattle-form" action="/cattle/" method="post">
         <label for="name">Nome:</label>
-        <input type="text" id="name" name="name" value="{{ cattle.name if cattle else '' }}" required>
+        <input type="text" id="name" name="name" value="{{ cattle.name }}" required>
 
         <label for="identification">Identificação (Opcional):</label>
-        <input type="text" id="identification" name="identification" value="{{ cattle.identification if cattle else '' }}">
+        <input type="text" id="identification" name="identification" value="{{ cattle.identification if cattle and cattle.identification else '' }}">
 
         <label for="race">Raça:</label>
-        <input type="text" id="race" name="race" value="{{ cattle.race if cattle else '' }}" required>
+        <input type="text" id="race" name="race" value="{{ cattle.race }}" required>
 
         <label for="gender">Gênero:</label>
         <select id="gender" name="gender" required>
@@ -49,10 +49,10 @@
         <input type="number" id="father_id" name="father_id" value="{{ cattle.father_id if cattle and cattle.father_id else '' }}">
 
         <label for="origin">Origem:</label>
-        <input type="text" id="origin" name="origin" value="{{ cattle.origin if cattle else '' }}">
+        <input type="text" id="origin" name="origin" value="{{ cattle.origin if cattle and cattle.origin else '' }}">
 
         <label for="notes">Observações:</label>
-        <textarea id="notes" name="notes" rows="3">{{ cattle.notes if cattle else '' }}</textarea>
+        <textarea id="notes" name="notes" rows="3">{{ cattle.notes if cattle and cattle.notes else '' }}</textarea>
 
         <button type="submit">
             {% if action == 'create' %}Adicionar Gado{% else %}Salvar Alterações{% endif %}

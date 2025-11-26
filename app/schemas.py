@@ -47,7 +47,7 @@ class BirthCreate(BaseModel):
     name: str
     gender: GenderEnum
     birth_date: date
-    mother_id: int = Field(..., gt=0)
+    mother_id: int = Field(None, gt=0)
     father_id: Optional[int] = Field(None, gt=0)
     race: Optional[str] = None
     notes: Optional[str] = None
