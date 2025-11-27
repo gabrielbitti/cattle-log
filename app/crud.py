@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from . import schemas
 from .models.cattle import Cattle
+from .models.cattle_weight import CattleWeight
 
 
 def get_cattle_by_id(db: Session, cattle_id: int):
@@ -112,3 +113,8 @@ def get_cattle_count(db: Session) -> int:
     # Using count() is generally efficient for simple counts
     return db.query(func.count(Cattle.id)).scalar()
 
+def get_all_cattle_weight(db: Session, cattle_id: int = None):
+    """Fetches a list of cattle records, ordered by ID."""
+    if cattle_id:
+        return db.query(CattleWeight).where(CattleWeight.cattle_id == cattle_id).order_by(CattleWeight.id).all()
+    return db.query(CattleWeight).order_by(CattleWeight.id).all()

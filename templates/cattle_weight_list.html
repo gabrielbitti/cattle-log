@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Evolução de Peso - Auditoria de Rebanho{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <h2>Evolução de Peso do Gado</h2>
+
+    <div class="filter-section" style="margin-bottom: 2rem;">
+        <form method="GET" action="/cattle-weight-list" style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
+            <div>
+                <label for="cattle_id">Filtrar por Animal:</label>
+                <select id="cattle_id" name="cattle_id">
+                    <option value="">Todos os animais</option>
+                    {% for cattle in cattle_list %}
+                    <option value="{{ cattle.id }}" {% if selected_cattle_id == cattle.id %}selected{% endif %}>
+                        {{ cattle.name }} (ID: {{ cattle.id }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Filtrar</button>
+            <a href="/cattle-weight-list" style="text-decoration: none;">
+                <button type="button">Limpar Filtros</button>
+            </a>
+        </form>
+    </div>
+
+    {% if weight_records %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Animal</th>
+                <th>Peso (kg)</th>
+                <th>Data da Medição</th>
+                <th>Observações</th>
+                <th>Registrado em</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for weight in weight_records %}
+            <tr>
+                <td data-label="ID">{{ weight.id }}</td>
+                <td data-label="Animal">{{ weight.cattle.name }} (ID: {{ weight.cattle_id }})</td>
+                <td data-label="Peso">{{ "%.2f"|format(weight.weight|float) }} kg</td>
+                <td data-label="Data da Medição">{{ weight.measurement_date }}</td>
+                <td data-label="Observações">{{ weight.notes if weight.notes else "-" }}</td>
+                <td data-label="Registrado em">{{ weight.created_at if weight.created_at else "-" }}</td>
+                <td data-label="Ações">
+                    <a href="/edit-cattle-weight/{{ weight.id }}">Editar</a>
+                    <a href="/add-cattle-weight/{{ weight.cattle_id }}">Novo Peso</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>{% if selected_cattle_id %}Nenhum registro de peso encontrado para este animal.{% else %}Nenhum registro de peso cadastrado ainda.{% endif %}</p>
+    {% endif %}
+
+    <div class="actions" style="margin-top: 2rem;">
+        <a href="/cattle-list" class="btn-add">Voltar para Lista de Gado</a>
+        {% if selected_cattle_id %}
+        <a href="/add-cattle-weight/{{ selected_cattle_id }}" class="btn-add">Adicionar Novo Peso</a>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}

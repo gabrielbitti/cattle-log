@@ -1,6 +1,7 @@
 import datetime
 
 from sqlalchemy import Column, Integer, DECIMAL, String, Date, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.database.db import Base
 
@@ -15,3 +16,6 @@ class CattleWeight(Base):
     notes = Column(String, nullable=True)
     created_at = Column(Date, default=datetime.date.today, nullable=False)
     updated_at = Column(Date, onupdate=datetime.date.today, nullable=True)
+
+    # Relationships
+    cattle = relationship("Cattle", back_populates="weight_records", lazy="select")

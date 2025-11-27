@@ -74,6 +74,29 @@ async def add_cattle_weight_form(request: Request, cattle_id: int, db: Session =
         raise HTTPException(status_code=404, detail="Cattle not found")
     return templates.TemplateResponse("cattle_weight_form.html", {"request": request, "action": "create", "cattle": cattle_data})
 
+@app.get("/cattle-weight-list", response_class=HTMLResponse)
+async def cattle_weight_list(request: Request, cattle_id: str = None, db: Session = Depends(get_db)):
+    # Convert cattle_id to int or None
+    parsed_cattle_id = None
+    if cattle_id and cattle_id.strip():
+        try:
+            parsed_cattle_id = int(cattle_id)
+        except ValueError:
+            parsed_cattle_id = None
+    
+    # Buscar todos os animais para o filtro
+    cattle_list = crud.get_all_cattle(db)
+    
+    # Buscar registros de peso (com filtro opcional por cattle_id)
+    weight_records = crud.get_all_cattle_weight(db, parsed_cattle_id)
+
+    return templates.TemplateResponse("cattle_weight_list.html", {
+        "request": request, 
+        "weight_records": weight_records,
+        "cattle_list": cattle_list,
+        "selected_cattle_id": parsed_cattle_id
+    })
+
 @app.get("/edit-cattle-weight/{weight_id}", response_class=HTMLResponse)
 async def edit_cattle_weight_form(request: Request, weight_id: int, db: Session = Depends(get_db)):
     # Assumindo que você terá uma função para buscar peso por ID

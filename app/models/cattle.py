@@ -2,6 +2,7 @@ import datetime
 import enum
 
 from sqlalchemy import Column, DECIMAL, Integer, String, Date, ForeignKey, Enum
+from sqlalchemy.orm import relationship
 
 from app.database.db import Base
 
@@ -34,3 +35,10 @@ class Cattle(Base):
     notes = Column(String, nullable=True)
     created_at = Column(Date, default=datetime.date.today, nullable=False)
     updated_at = Column(Date, onupdate=datetime.date.today, nullable=True)
+
+    # Relationships
+    weight_records = relationship("CattleWeight", back_populates="cattle", lazy="select", cascade="all, delete-orphan")
+    mother = relationship("Cattle", remote_side=[id], foreign_keys=[mother_id], back_populates="offspring_as_mother")
+    father = relationship("Cattle", remote_side=[id], foreign_keys=[father_id], back_populates="offspring_as_father")
+    offspring_as_mother = relationship("Cattle", foreign_keys=[mother_id], back_populates="mother")
+    offspring_as_father = relationship("Cattle", foreign_keys=[father_id], back_populates="father")
