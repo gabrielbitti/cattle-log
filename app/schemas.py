@@ -54,3 +54,14 @@ class BirthCreate(BaseModel):
 
 class CattleCount(BaseModel):
     total_count: int
+
+class CattleWeightCreate(BaseModel):
+    cattle_id: int
+    measurement_date: date
+    weight: float
+    notes: Optional[str] = None
+
+class CattleWeightUpdate(BaseModel):
+    measurement_date: date
+    weight: float
+    notes: Optional[str] = None

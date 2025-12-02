@@ -118,3 +118,33 @@ def get_all_cattle_weight(db: Session, cattle_id: int = None):
     if cattle_id:
         return db.query(CattleWeight).where(CattleWeight.cattle_id == cattle_id).order_by(CattleWeight.id).all()
     return db.query(CattleWeight).order_by(CattleWeight.id).all()
+
+def create_cattle_weight(db: Session, cattle_weight: schemas.CattleWeightCreate):
+    """."""
+    db_cattle_weight = CattleWeight(**cattle_weight.model_dump())  # Use model_dump for Pydantic v2
+    db.add(db_cattle_weight)
+    db.commit()
+    db.refresh(db_cattle_weight)
+
+    return db_cattle_weight
+
+def get_cattle_weight_by_id(db: Session, cattle_weight_id: int):
+    """."""
+    return db.query(CattleWeight).filter(CattleWeight.id == cattle_weight_id).first()
+
+
+def update_cattle_weight(db: Session, cattle_weight_id: int, cattle_weight_update: schemas.CattleWeightUpdate):
+    """."""
+    db_cattle_weight = get_cattle_weight_by_id(db, cattle_weight_id)
+    if not db_cattle_weight:
+        return None
+
+    update_data = cattle_weight_update.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(db_cattle_weight, key, value)
+
+    db.commit()
+    db.refresh(db_cattle_weight)
+
+    return db_cattle_weight
