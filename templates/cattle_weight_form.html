@@ -24,9 +24,11 @@
             {% if action == 'create' %}Registrar Peso{% else %}Salvar Alterações{% endif %}
         </button>
     </form>
-    <p><a href="{% if action == 'create' %}/cattle-list{% else %}/cattle-weight/{{ cattle.id }}{% endif %}">
-        {% if action == 'create' %}Cancelar e Voltar para Lista{% else %}Cancelar e Voltar para Evolução{% endif %}
-    </a></p>
+    <p>
+        <a href="/cattle-weight-list">
+            Cancelar e Voltar para Evolução
+        </a>
+    </p>
 </section>
 {% endblock %}
 
@@ -81,7 +83,7 @@
                     cattleWeightForm.reset();
                 } else {
                     alert(`Registro de peso (ID: ${result.id}) atualizado com sucesso!`);
-                    window.location.href = `/cattle-weight/${data.cattle_id}`;
+                    window.location.href = `/cattle-weight-list/`;
                 }
             } catch (error) {
                 console.error("Erro ao processar registro de peso:", error);
