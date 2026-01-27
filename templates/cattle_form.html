@@ -7,7 +7,7 @@
 {% block content %}
 
 <section class="content-section form-section">
-    <h2>{% if action == 'create' %}Adicionar Novo Gado (Boi ou Vaca){% else %}Editar Gado (ID: {{ cattle.id }}){% endif %}</h2>
+    <h2>{% if action == 'create' %}Adicionar Gado (Boi ou Vaca){% else %}Editar Gado (ID: {{ cattle.id }}){% endif %}</h2>
     <form id="cattle-form" action="/cattle/" method="post">
         <label for="name">Nome:</label>
         <input type="text" id="name" name="name" value="{{ cattle.name if cattle else '' }}" required>

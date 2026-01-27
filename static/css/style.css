@@ -24,7 +24,7 @@ header {
     color: #1d1d1f;
     padding: 0.8rem 20px;
     text-align: center;
-    border-bottom: 1px solid #d2d2d7; /* Subtle border */
+    border-bottom: 1px solid #ededed; /* Subtle border */
     position: sticky;
     top: 0;
     z-index: 100;
@@ -37,7 +37,7 @@ header h1 {
 }
 
 nav {
-    margin-top: 0.3rem;
+    margin-top: 1.5rem;
 }
 
 nav a {
@@ -58,7 +58,7 @@ nav a:hover {
 /* Main Content Area */
 main {
     flex-grow: 1;
-    max-width: 980px; /* Common Apple container width */
+    /*max-width: 980px; !* Common Apple container width *!*/
     width: 90%;
     margin: 30px auto;
     padding: 0 10px;

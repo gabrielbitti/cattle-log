@@ -7,7 +7,7 @@ from alembic.script import ScriptDirectory
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from app.settings import DATABASE_URL
+from app.config import DATABASE_URL
 from app.database.db import Base
 
 from app.models import cattle
