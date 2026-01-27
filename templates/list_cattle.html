@@ -31,16 +31,16 @@
                 <td data-label="Identificação">{{ cattle.identification if cattle.identification else "-" }}</td>
                 <td data-label="Raça">{{ cattle.race.capitalize() }}</td>
                 <td data-label="Gênero">{{ "Fêmea" if cattle.gender == "FEMALE" else "Macho" }}</td>
-                <td data-label="Data Nasc.">{{ cattle.birth_date if cattle.birth_date else "-" }}</td>
+                <td data-label="Data Nascimento">{{ cattle.birth_date if cattle.birth_date else "-" }}</td>
                 <td data-label="Status">{{ cattle.status.capitalize() if cattle.status else "Ativo" }}</td>
                 <td data-label="ID Mãe">{{ cattle.mother_id if cattle.mother_id else "-" }}</td>
                 <td data-label="ID Pai">{{ cattle.father_id if cattle.father_id else "-" }}</td>
                 <td data-label="Criado em">{{ cattle.created_at if cattle.created_at else "-" }}</td>
                 <td data-label="Ações">
                     <a href="/cattle/edit/{{ cattle.id }}">Editar</a>
-                    <a href="/add-cattle-weight/{{ cattle.id }}">Evoluir</a>
-                    <a href="/cattle/health/{{ cattle.id }}">Saúde</a>
-                    <a href="/cattle/reproduction/{{ cattle.id }}">Reprodução</a>
+                    <a href="/add-cattle-weight/{{ cattle.id }}">Evoluir Peso</a>
+                    <a href="/add-cattle-health/{{ cattle.id }}">Saúde</a>
+                    <a href="/add-cattle-reproduction/{{ cattle.id }}">Reprodução</a>
                 </td>
             </tr>
             {% endfor %}

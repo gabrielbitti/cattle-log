@@ -130,6 +130,57 @@ async def edit_cattle_weight_form(request: Request, weight_id: int,
         "cattle_weight": cattle_weight_details})
 
 
+"""Saúde"""
+
+@app.get("/add-cattle-health/{cattle_id}", response_class=HTMLResponse)
+async def add_cattle_health_form(request: Request, cattle_id: int,
+                                 db: Session = Depends(get_db)):
+    cattle_data = crud.get_cattle_by_id(db, cattle_id)
+    if not cattle_data:
+        raise HTTPException(status_code=404, detail="Cattle not found")
+    return templates.TemplateResponse("cattle_health_form.html",
+                                      {"request": request, "action": "create",
+                                       "cattle": cattle_data})
+
+
+@app.get("/cattle-health-list", response_class=HTMLResponse)
+async def cattle_health_list(request: Request, cattle_id: str = None,
+                             db: Session = Depends(get_db)):
+    # Convert cattle_id to int or None
+    parsed_cattle_id = None
+    if cattle_id and cattle_id.strip():
+        try:
+            parsed_cattle_id = int(cattle_id)
+        except ValueError:
+            parsed_cattle_id = None
+
+    # Buscar todos os animais para o filtro
+    cattle_list = crud.get_all_cattle(db)
+
+    # Buscar registros de peso (com filtro opcional por cattle_id)
+    health_records = crud.get_all_cattle_health(db, parsed_cattle_id)
+
+    return templates.TemplateResponse("cattle_health_list.html", {
+        "request": request,
+        "health_records": health_records,
+        "cattle_list": cattle_list,
+        "selected_cattle_id": parsed_cattle_id
+    })
+
+
+@app.get("/edit-cattle-health/{health_id}", response_class=HTMLResponse)
+async def edit_cattle_health_form(request: Request, health_id: int,
+                                  db: Session = Depends(get_db)):
+    # Assumindo que você terá uma função para buscar peso por ID
+    cattle_health_details = crud.get_cattle_health_by_id(db, health_id)
+    if not cattle_health_details:
+        raise HTTPException(status_code=404,
+                            detail="Cattle health record not found")
+    cattle_data = crud.get_cattle_by_id(db, cattle_health_details.cattle_id)
+    return templates.TemplateResponse("cattle_health_form.html", {
+        "request": request, "action": "edit", "cattle": cattle_data,
+        "cattle_health": cattle_health_details})
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}

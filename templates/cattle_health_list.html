@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Saúde do Gado - Auditoria de Rebanho{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <h2>Saúde do Gado</h2>
+
+    {% if health_records %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Animal</th>
+                <th>Peso (kg)</th>
+                <th>Data da Medição</th>
+                <th>Observações</th>
+                <th>Registrado em</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for health in health_records %}
+            <tr>
+                <td data-label="ID">{{ health.id }}</td>
+                <td data-label="Animal">{{ health.cattle.name }} (ID: {{ health.cattle_id }})</td>
+                <td data-label="Peso">{{ "%.2f"|format(health.health|float) }} kg</td>
+                <td data-label="Data da Medição">{{ health.measurement_date }}</td>
+                <td data-label="Observações">{{ health.notes if health.notes else "-" }}</td>
+                <td data-label="Registrado em">{{ health.created_at if health.created_at else "-" }}</td>
+                <td data-label="Ações">
+                    <a href="/edit-cattle-health/{{ health.id }}">Editar</a>
+                    <a href="/add-cattle-health/{{ health.cattle_id }}">Novo Peso</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>{% if selected_cattle_id %}Nenhum registro de saúde encontrado para este animal.{% else %}Nenhum registro de saúde cadastrado.{% endif %}</p>
+    {% endif %}
+
+    <div class="actions" style="margin-top: 2rem;">
+        {% if selected_cattle_id %}
+        <a href="/add-cattle-health/{{ selected_cattle_id }}" class="btn-add">Adicionar Novo Peso</a>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}

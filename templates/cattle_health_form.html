@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if action == 'create' %}Registrar Saúde{% else %}Editar Registro de Saúde{% endif %} - Auditoria de Rebanho
+{% endblock %}
+
+{% block content %}
+
+<section class="content-section form-section">
+    <h2>{% if action == 'create' %}Registrar Saúde - {{ cattle.name }} (ID: {{ cattle.id }}){% else %}Editar Registro de Saúde (ID: {{ cattle_health.id }}){% endif %}</h2>
+    <form id="cattle-health-form" action="/cattle-health/" method="post">
+        <input type="hidden" id="cattle_id" name="cattle_id" value="{{ cattle.id }}">
+        
+        <label for="health">Saúde (kg):</label>
+        <input type="number" step="0.01" id="health" name="health" value="{{ cattle_health.health if cattle_health else '' }}" required>
+
+        <label for="measurement_date">Data da Medição:</label>
+        <input type="date" id="measurement_date" name="measurement_date" value="{{ cattle_health.measurement_date if cattle_health else '' }}" required>
+
+        <label for="notes">Observações:</label>
+        <textarea id="notes" name="notes" rows="3">{{ cattle_health.notes if cattle_health and cattle_health.notes else '' }}</textarea>
+
+        <button type="submit">
+            {% if action == 'create' %}Registrar Saúde{% else %}Salvar Alterações{% endif %}
+        </button>
+    </form>
+    <p>
+        <a href="/cattle-health-list">
+            Voltar para a Lista
+        </a>
+    </p>
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    const cattleWeightForm = document.getElementById("cattle-health-form");
+    const action = '{{ action }}';
+    const cattleHealthId = {% if cattle_health %}'{{ cattle_health.id }}'{% else %}null{% endif %};
+
+    if (cattleWeightForm) {
+        cattleWeightForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const formData = new FormData(cattleWeightForm);
+            const data = {
+                cattle_id: parseInt(formData.get("cattle_id")),
+                health: parseFloat(formData.get("health")),
+                measurement_date: formData.get("measurement_date"),
+                notes: formData.get("notes") || null
+            };
+
+            if (!data.notes) delete data.notes;
+
+            try {
+                let response;
+                if (action === 'create') {
+                    response = await fetch("/cattle-health/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+                } else {
+                    response = await fetch(`/cattle-health/${cattleHealthId}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(data),
+                    });
+                }
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                if (action === 'create') {
+                    alert(`Saúde registrado com sucesso! ID: ${result.id}`);
+                    cattleWeightForm.reset();
+                } else {
+                    alert(`Registro de peso (ID: ${result.id}) atualizado com sucesso!`);
+                    window.location.href = `/cattle-health-list/`;
+                }
+            } catch (error) {
+                console.error("Erro ao processar registro de peso:", error);
+                alert(`Erro ao ${action === 'create' ? 'registrar' : 'atualizar'} peso: ${error.message}`);
+            }
+        });
+    }
+</script>
+{% endblock %}

@@ -1,7 +1,11 @@
-from sqlalchemy.orm import Session
+"""."""
+
 from sqlalchemy import func
+from sqlalchemy.orm import Session
+
 from . import schemas
 from .models.cattle import Cattle
+from .models.cattle_health import CattleHealth
 from .models.cattle_weight import CattleWeight
 
 
@@ -148,3 +152,29 @@ def update_cattle_weight(db: Session, cattle_weight_id: int, cattle_weight_updat
     db.refresh(db_cattle_weight)
 
     return db_cattle_weight
+
+def get_all_cattle_health(db: Session, cattle_id: int = None):
+    """Fetches a list of cattle records, ordered by ID."""
+    if cattle_id:
+        return db.query(CattleHealth).where(CattleHealth.cattle_id == cattle_id).order_by(CattleHealth.id).all()
+    return db.query(CattleHealth).order_by(CattleHealth.id).all()
+
+def get_cattle_health_by_id(db: Session, cattle_health_id: int):
+    """."""
+    return db.query(CattleHealth).filter(CattleHealth.id == cattle_health_id).first()
+
+def update_cattle_health(db: Session, cattle_health_id: int, cattle_health_update: schemas.CattleHealthUpdate):
+    """."""
+    db_cattle_health = get_cattle_health_by_id(db, cattle_health_id)
+    if not db_cattle_health:
+        return None
+
+    update_data = cattle_health_update.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        setattr(db_cattle_health, key, value)
+
+    db.commit()
+    db.refresh(db_cattle_health)
+
+    return db_cattle_health
