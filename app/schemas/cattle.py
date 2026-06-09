@@ -7,7 +7,6 @@ from typing import Optional
 from pydantic import BaseModel, Field
 
 from app.models.cattle import GenderEnum, StatusEnum
-from app.models.cattle_health import HealthRecordTypeEnum
 
 
 class CattleBase(BaseModel):
@@ -65,41 +64,3 @@ class BirthCreate(BaseModel):
 
 class CattleCount(BaseModel):
     total_count: int
-
-
-class CattleWeightCreate(BaseModel):
-    cattle_id: int
-    measurement_date: date
-    weight: float
-    notes: Optional[str] = None
-
-
-class CattleWeightUpdate(BaseModel):
-    measurement_date: date
-    weight: float
-    notes: Optional[str] = None
-
-
-class CattleHealthCreate(BaseModel):
-    cattle_id: int
-    record_type: HealthRecordTypeEnum
-    date: date
-    description: str
-    veterinarian: Optional[str] = None
-    medication: Optional[str] = None
-    dosage: Optional[str] = None
-    cost: float
-    next_dose_date: Optional[date] = None
-    notes: Optional[str] = None
-
-
-class CattleHealthUpdate(BaseModel):
-    record_type: HealthRecordTypeEnum
-    date: date
-    description: str
-    veterinarian: Optional[str] = None
-    medication: Optional[str] = None
-    dosage: Optional[str] = None
-    cost: float
-    next_dose_date: Optional[date] = None
-    notes: Optional[str] = None

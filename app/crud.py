@@ -1,5 +1,7 @@
 """."""
 
+# TODO: refact!!!
+
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -8,6 +10,7 @@ from .models.cattle import Cattle
 from .models.cattle_health import CattleHealth
 from .models.cattle_weight import CattleWeight
 
+# TODO: cattle
 
 def get_cattle_by_id(db: Session, cattle_id: int):
     """Fetches a single cattle record by its ID."""
@@ -117,6 +120,8 @@ def get_cattle_count(db: Session) -> int:
     # Using count() is generally efficient for simple counts
     return db.query(func.count(Cattle.id)).scalar()
 
+# TODO: cattle_weight
+
 def get_all_cattle_weight(db: Session, cattle_id: int = None):
     """Fetches a list of cattle records, ordered by ID."""
     if cattle_id:
@@ -152,6 +157,8 @@ def update_cattle_weight(db: Session, cattle_weight_id: int, cattle_weight_updat
     db.refresh(db_cattle_weight)
 
     return db_cattle_weight
+
+# TODO: cattle_health
 
 def get_all_cattle_health(db: Session, cattle_id: int = None):
     """Fetches a list of cattle records, ordered by ID."""

@@ -1,0 +1,179 @@
+import os
+from typing import List
+
+from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
+
+from app import crud, schemas
+from app.database.db import get_db
+from app.models.cattle import GenderEnum
+
+templates = Jinja2Templates(
+    directory=os.path.join(os.path.dirname(__file__), "../../templates"))
+
+router = APIRouter(
+    tags=["Cattle Weight"],
+    responses={404: {"description": "Not found"}},
+)
+
+
+@router.get("/", response_class=HTMLResponse)
+async def read_root(request: Request, db: Session = Depends(get_db)):
+    cow_count = 0
+    bull_count = 0
+
+    all_cattle = crud.get_all_cattle(db)
+    for _cattle in all_cattle:
+        if _cattle.gender == GenderEnum.MALE.value:
+            bull_count += 1
+        else:
+            cow_count += 1
+
+    data = dict(
+        request=request,
+        cattle_count=len(all_cattle),
+        cow_count=cow_count,
+        bull_count=bull_count,
+    )
+
+    return templates.TemplateResponse("index.html", data)
+
+
+@router.get("/add-cattle", response_class=HTMLResponse)
+async def add_cattle_form(request: Request):
+    return templates.TemplateResponse("cattle_form.html",
+                                      {"request": request, "action": "create"})
+
+
+@router.get("/add-birth", response_class=HTMLResponse)
+async def add_birth_form(request: Request):
+    return templates.TemplateResponse("add_birth.html", {"request": request})
+
+
+@router.get("/cattle-list", response_class=HTMLResponse)
+async def list_cattle_page(request: Request, db: Session = Depends(get_db)):
+    cattle_list = crud.get_all_cattle(db,
+                                      limit=1000)  # Fetch all cattle (adjust limit if needed)
+    return templates.TemplateResponse("list_cattle.html", {"request": request,
+                                                           "cattle_list": cattle_list})
+
+
+@router.get("/cattle/edit/{cattle_id}", response_class=HTMLResponse)
+async def edit_cattle_form(request: Request, cattle_id: int,
+                           db: Session = Depends(get_db)):
+    cattle_data = crud.get_cattle_by_id(db, cattle_id)
+    if not cattle_data:
+        raise HTTPException(status_code=404, detail="Cattle not found")
+    return templates.TemplateResponse("cattle_form.html",
+                                      {"request": request, "action": "edit",
+                                       "cattle": cattle_data})
+
+
+@router.get("/add-cattle-weight/{cattle_id}", response_class=HTMLResponse)
+async def add_cattle_weight_form(request: Request, cattle_id: int,
+                                 db: Session = Depends(get_db)):
+    cattle_data = crud.get_cattle_by_id(db, cattle_id)
+    if not cattle_data:
+        raise HTTPException(status_code=404, detail="Cattle not found")
+    return templates.TemplateResponse("cattle_weight_form.html",
+                                      {"request": request, "action": "create",
+                                       "cattle": cattle_data})
+
+
+@router.get("/cattle-weight-list", response_class=HTMLResponse)
+async def cattle_weight_list(request: Request, cattle_id: str = None,
+                             db: Session = Depends(get_db)):
+    # Convert cattle_id to int or None
+    parsed_cattle_id = None
+    if cattle_id and cattle_id.strip():
+        try:
+            parsed_cattle_id = int(cattle_id)
+        except ValueError:
+            parsed_cattle_id = None
+
+    # Buscar todos os animais para o filtro
+    cattle_list = crud.get_all_cattle(db)
+
+    # Buscar registros de peso (com filtro opcional por cattle_id)
+    weight_records = crud.get_all_cattle_weight(db, parsed_cattle_id)
+
+    return templates.TemplateResponse("cattle_weight_list.html", {
+        "request": request,
+        "weight_records": weight_records,
+        "cattle_list": cattle_list,
+        "selected_cattle_id": parsed_cattle_id
+    })
+
+
+@router.get("/edit-cattle-weight/{weight_id}", response_class=HTMLResponse)
+async def edit_cattle_weight_form(request: Request, weight_id: int,
+                                  db: Session = Depends(get_db)):
+    # Assumindo que você terá uma função para buscar peso por ID
+    cattle_weight_details = crud.get_cattle_weight_by_id(db, weight_id)
+    if not cattle_weight_details:
+        raise HTTPException(status_code=404,
+                            detail="Cattle weight record not found")
+    cattle_data = crud.get_cattle_by_id(db, cattle_weight_details.cattle_id)
+    return templates.TemplateResponse("cattle_weight_form.html", {
+        "request": request, "action": "edit", "cattle": cattle_data,
+        "cattle_weight": cattle_weight_details})
+
+
+"""Saúde"""
+
+
+@router.get("/add-cattle-health/{cattle_id}", response_class=HTMLResponse)
+async def add_cattle_health_form(request: Request, cattle_id: int,
+                                 db: Session = Depends(get_db)):
+    cattle_data = crud.get_cattle_by_id(db, cattle_id)
+    if not cattle_data:
+        raise HTTPException(status_code=404, detail="Cattle not found")
+    return templates.TemplateResponse("cattle_health_form.html",
+                                      {"request": request, "action": "create",
+                                       "cattle": cattle_data})
+
+
+@router.get("/cattle-health-list", response_class=HTMLResponse)
+async def cattle_health_list(request: Request, cattle_id: str = None,
+                             db: Session = Depends(get_db)):
+    # Convert cattle_id to int or None
+    parsed_cattle_id = None
+    if cattle_id and cattle_id.strip():
+        try:
+            parsed_cattle_id = int(cattle_id)
+        except ValueError:
+            parsed_cattle_id = None
+
+    # Buscar todos os animais para o filtro
+    cattle_list = crud.get_all_cattle(db)
+
+    # Buscar registros de peso (com filtro opcional por cattle_id)
+    health_records = crud.get_all_cattle_health(db, parsed_cattle_id)
+
+    return templates.TemplateResponse("cattle_health_list.html", {
+        "request": request,
+        "health_records": health_records,
+        "cattle_list": cattle_list,
+        "selected_cattle_id": parsed_cattle_id
+    })
+
+
+@router.get("/edit-cattle-health/{health_id}", response_class=HTMLResponse)
+async def edit_cattle_health_form(request: Request, health_id: int,
+                                  db: Session = Depends(get_db)):
+    # Assumindo que você terá uma função para buscar peso por ID
+    cattle_health_details = crud.get_cattle_health_by_id(db, health_id)
+    if not cattle_health_details:
+        raise HTTPException(status_code=404,
+                            detail="Cattle health record not found")
+    cattle_data = crud.get_cattle_by_id(db, cattle_health_details.cattle_id)
+    return templates.TemplateResponse("cattle_health_form.html", {
+        "request": request, "action": "edit", "cattle": cattle_data,
+        "cattle_health": cattle_health_details})
+
+
+@router.get("/health")
+def health_check():
+    return {"status": "ok"}

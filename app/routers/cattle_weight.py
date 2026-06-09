@@ -1,16 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app import crud, schemas
+
+from app import crud
 from app.database.db import get_db
-from typing import List
+from app.schemas.cattle_weight import CattleWeightCreate, CattleWeightUpdate
 
 router = APIRouter(
     tags=["Cattle Weight"],
     responses={404: {"description": "Not found"}},
 )
 
-@router.post("/cattle-weight", response_model=schemas.CattleWeightCreate, summary="Create new cattle weight")
-def create_cattle_weight_endpoint(cattle_weight: schemas.CattleWeightCreate, db: Session = Depends(get_db)):
+@router.post("/cattle-weight", response_model=CattleWeightCreate, summary="Create new cattle weight")
+def create_cattle_weight_endpoint(cattle_weight: CattleWeightCreate, db: Session = Depends(get_db)):
     """Creates a new cattle record (cow or bull)."""
     try:
         return crud.create_cattle_weight(db=db, cattle_weight=cattle_weight)
@@ -22,8 +23,8 @@ def create_cattle_weight_endpoint(cattle_weight: schemas.CattleWeightCreate, db:
         raise HTTPException(status_code=500, detail="Ocorreu um erro inesperado ao criar o gado.")
 
 
-@router.put("/cattle-weight/{cattle_weight_id}", response_model=schemas.CattleWeightUpdate, summary="Update cattle by ID")
-def update_cattle_endpoint(cattle_weight_id: int, cattle_weight_update: schemas.CattleWeightUpdate, db: Session = Depends(get_db)):
+@router.put("/cattle-weight/{cattle_weight_id}", response_model=CattleWeightUpdate, summary="Update cattle by ID")
+def update_cattle_endpoint(cattle_weight_id: int, cattle_weight_update: CattleWeightUpdate, db: Session = Depends(get_db)):
     """Updates an existing cattle record by its ID."""
     try:
         updated_cattle = crud.update_cattle_weight(db=db, cattle_weight_id=cattle_weight_id, cattle_weight_update=cattle_weight_update)
