@@ -15,7 +15,7 @@
                 <th>Identificação</th>
                 <th>Raça</th>
                 <th>Gênero</th>
-                <th>Data Nasc.</th>
+                <th>Data Nascimento</th>
                 <th>Status</th>
                 <th>ID Mãe</th>
                 <th>ID Pai</th>
@@ -38,9 +38,9 @@
                 <td data-label="Criado em">{{ cattle.created_at if cattle.created_at else "-" }}</td>
                 <td data-label="Ações">
                     <a href="/cattle/edit/{{ cattle.id }}">Editar</a>
-                    <a href="/add-cattle-weight/{{ cattle.id }}">Evoluir Peso</a>
-                    <a href="/add-cattle-health/{{ cattle.id }}">Saúde</a>
-                    <a href="/add-cattle-reproduction/{{ cattle.id }}">Reprodução</a>
+{#                    <a href="/add-cattle-weight/{{ cattle.id }}">Evoluir Peso</a>#}
+{#                    <a href="/add-cattle-health/{{ cattle.id }}">Saúde</a>#}
+{#                    <a href="/add-cattle-reproduction/{{ cattle.id }}">Reprodução</a>#}
                 </td>
             </tr>
             {% endfor %}
@@ -50,9 +50,9 @@
     <p>Nenhum gado cadastrado ainda.</p>
     {% endif %}
 
-    <div class="actions" style="margin-top: 2rem;">
-        <a href="/add-cattle" class="btn-add">Adicionar Novo Gado</a>
-    </div>
+{#    <div class="actions" style="margin-top: 2rem;">#}
+{#        <a href="/add-cattle" class="btn-add">Adicionar Novo Gado</a>#}
+{#    </div>#}
 
 </section>
 {% endblock %}
