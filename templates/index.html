@@ -4,7 +4,6 @@
 
 {% block content %}
     <section class="dashboard">
-        <h2>Dashboard</h2>
         <div class="stats">
             <div class="stat-card">
                 <h3>Total de Gado</h3>
@@ -20,4 +19,101 @@
             </div>
         </div>
     </section>
+
+    <section class="cattle-structure">
+        <div>
+            <h3>Estrutura do Rebanho</h3>
+        </div>
+        <br>
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Bezerros</h3>
+                <h3 id="">?</h3>
+            </div>
+            <div class="stat-card">
+                <h3>Novilhas</h3>
+                <h3 id="">?</h3>
+            </div>
+            <div class="stat-card">
+                <h3>Garrotes</h3>
+                <h3 id="">?</h3>
+            </div>
+            <div class="stat-card">
+                <h3>Vacas</h3>
+                <h3 id="">?</h3>
+            </div>
+            <div class="stat-card">
+                <h3>Bois</h3>
+                <h3 id="">?</h3>
+            </div>
+        </div>
+    </section>
+
+    <section class="births-by-month">
+        <div class="stats">
+            <div class="stat-card">
+                <canvas id="birthsChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+     <section class="">
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Nascimentos no ano (2026)</h3>
+                <h3 id="cattle-count">143</h3>
+            </div>
+            <div class="stat-card">
+                <h3>Média de idade do rebanho</h3>
+                <h3 id="cow-count">4,2 anos</h3>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}
+
+{% block scripts_extra %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const labels = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const data = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Machos',
+                data: [4, 6, 3, 8, 5, 7, 2, 9, 4, 6, 3, 5],
+                borderColor: 'rgb(0 121 204)',
+                backgroundColor: 'rgb(46 147 216)',
+                borderWidth: 0,
+                borderRadius: 7,
+                borderSkipped: false,
+            },
+            {
+                label: 'Fêmeas',
+                data: [5, 3, 7, 4, 9, 6, 8, 3, 6, 4, 7, 2],
+                borderColor: 'rgb(230 117 142)',
+                backgroundColor: 'rgb(230 117 142)',
+                borderWidth: 0,
+                borderRadius: 7,
+                borderSkipped: false,
+            }
+        ]
+    };
+
+    new Chart(document.getElementById('birthsChart'), {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            aspectRatio: 4,
+            plugins: {
+                legend: { position: 'top' },
+                title: {
+                    display: true,
+                    text: 'Nascimentos por mês em 2026'
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
