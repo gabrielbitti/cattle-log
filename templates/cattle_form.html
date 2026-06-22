@@ -91,15 +91,18 @@
                 notes: formData.get("notes") || null
             };
 
-            // Remove null fields if necessary, depending on API validation
-            if (!data.identification) delete data.identification;
-            if (!data.birth_date) delete data.birth_date;
-            if (!data.acquisition_date) delete data.acquisition_date;
-            if (data.acquisition_value === null) delete data.acquisition_value;
-            if (data.mother_id === null) delete data.mother_id;
-            if (data.father_id === null) delete data.father_id;
-            if (!data.origin) delete data.origin;
-            if (!data.notes) delete data.notes;
+            // In create mode, omit unset optional fields entirely.
+            // In edit mode, keep nulls so the backend knows to clear those fields.
+            if (action === 'create') {
+                if (!data.identification) delete data.identification;
+                if (!data.birth_date) delete data.birth_date;
+                if (!data.acquisition_date) delete data.acquisition_date;
+                if (data.acquisition_value === null) delete data.acquisition_value;
+                if (data.mother_id === null) delete data.mother_id;
+                if (data.father_id === null) delete data.father_id;
+                if (!data.origin) delete data.origin;
+                if (!data.notes) delete data.notes;
+            }
 
             try {
                 let response;

@@ -1,37 +1,41 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from app import crud
 from app.database.db import get_db
-from app.schemas.cattle_weight import CattleWeightCreate, CattleWeightUpdate
+from app.domain.cattle_weight_domain import CattleWeightDomain
+from app.exceptions import EntityNotFoundError
+from app.schemas.cattle_weight import CattleWeightCreate, CattleWeightUpdate, CattleWeightResponse
 
 router = APIRouter(
     tags=["Cattle Weight"],
     responses={404: {"description": "Not found"}},
 )
 
-@router.post("/cattle-weight", response_model=CattleWeightCreate, summary="Create new cattle weight")
+
+@router.get("/cattle-weight", response_model=List[CattleWeightResponse], summary="List weight records")
+def list_cattle_weight_endpoint(cattle_id: int | None = None, db: Session = Depends(get_db)):
+    return CattleWeightDomain(db).get_all(cattle_id=cattle_id)
+
+
+@router.post("/cattle-weight", response_model=CattleWeightResponse, summary="Create cattle weight record")
 def create_cattle_weight_endpoint(cattle_weight: CattleWeightCreate, db: Session = Depends(get_db)):
-    """Creates a new cattle record (cow or bull)."""
     try:
-        return crud.create_cattle_weight(db=db, cattle_weight=cattle_weight)
+        return CattleWeightDomain(db).create(data=cattle_weight)
+    except EntityNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        print(e)
-        # Log the exception details in a real application
-        raise HTTPException(status_code=500, detail="Ocorreu um erro inesperado ao criar o gado.")
 
 
-@router.put("/cattle-weight/{cattle_weight_id}", response_model=CattleWeightUpdate, summary="Update cattle by ID")
-def update_cattle_endpoint(cattle_weight_id: int, cattle_weight_update: CattleWeightUpdate, db: Session = Depends(get_db)):
-    """Updates an existing cattle record by its ID."""
+@router.put("/cattle-weight/{cattle_weight_id}", response_model=CattleWeightResponse, summary="Update weight record")
+def update_cattle_weight_endpoint(
+    cattle_weight_id: int, cattle_weight_update: CattleWeightUpdate, db: Session = Depends(get_db)
+):
     try:
-        updated_cattle = crud.update_cattle_weight(db=db, cattle_weight_id=cattle_weight_id, cattle_weight_update=cattle_weight_update)
-        if updated_cattle is None:
-            raise HTTPException(status_code=404, detail="Peso não encontrado")
-        return updated_cattle
+        return CattleWeightDomain(db).update(weight_id=cattle_weight_id, data=cattle_weight_update)
+    except EntityNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Ocorreu um erro inesperado ao atualizar o gado.")
