@@ -36,6 +36,7 @@ def upgrade() -> None:
         sa.Column('notes', sa.String(), nullable=True),
         sa.Column('created_at', sa.Date(), nullable=False),
         sa.Column('updated_at', sa.Date(), nullable=True),
+        sa.Column('deleted_at', sa.Date(), nullable=True),
         sa.ForeignKeyConstraint(['father_id'], ['cattle.id'], ),
         sa.ForeignKeyConstraint(['mother_id'], ['cattle.id'], ),
         sa.PrimaryKeyConstraint('id'),

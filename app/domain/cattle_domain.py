@@ -61,6 +61,10 @@ class CattleDomain:
         )
         return self._repo.create(instance)
 
+    def delete_cattle(self, cattle_id: int) -> None:
+        cattle = self.get_cattle_by_id(cattle_id)
+        self._repo.soft_delete(cattle)
+
     def update_cattle(self, cattle_id: int, data: CattleUpdate) -> Cattle:
         db_cattle = self.get_cattle_by_id(cattle_id)
         update_data = data.model_dump(exclude_unset=True)

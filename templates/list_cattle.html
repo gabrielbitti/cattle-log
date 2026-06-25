@@ -37,7 +37,8 @@
                 <td data-label="ID Pai">{{ cattle.father_id if cattle.father_id else "-" }}</td>
                 <td data-label="Criado em">{{ cattle.created_at | format_date }}</td>
                 <td data-label="Ações">
-                    <a href="/cattle/edit/{{ cattle.id }}">Editar</a>
+                    <a class="btn-edit" href="/cattle/edit/{{ cattle.id }}">Editar</a>
+                    <button class="btn-delete" data-id="{{ cattle.id }}" data-name="{{ cattle.name }}">Excluir</button>
 {#                    <a href="/add-cattle-weight/{{ cattle.id }}">Evoluir Peso</a>#}
 {#                    <a href="/add-cattle-health/{{ cattle.id }}">Saúde</a>#}
 {#                    <a href="/add-cattle-reproduction/{{ cattle.id }}">Reprodução</a>#}
@@ -55,5 +56,25 @@
 {#    </div>#}
 
 </section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    document.querySelectorAll(".btn-delete").forEach(btn => {
+        btn.addEventListener("click", async () => {
+            const id = btn.dataset.id;
+            const name = btn.dataset.name;
+            if (!confirm(`Excluir "${name}" (ID: ${id})? Esta ação não pode ser desfeita.`)) return;
+
+            const response = await fetch(`/cattle/${id}`, { method: "DELETE" });
+            if (response.ok) {
+                btn.closest("tr").remove();
+            } else {
+                const err = await response.json().catch(() => ({}));
+                alert(`Erro ao excluir: ${err.detail || response.status}`);
+            }
+        });
+    });
+</script>
 {% endblock %}
 

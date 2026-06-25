@@ -58,3 +58,11 @@ def update_cattle_endpoint(cattle_id: int, cattle_update: CattleUpdate, db: Sess
         raise HTTPException(status_code=404, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete("/cattle/{cattle_id}", status_code=204, summary="Soft delete cattle by ID")
+def delete_cattle_endpoint(cattle_id: int, db: Session = Depends(get_db)):
+    try:
+        CattleDomain(db).delete_cattle(cattle_id=cattle_id)
+    except EntityNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
