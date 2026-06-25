@@ -16,6 +16,27 @@ from app.repositories.cattle_weight import CattleWeightRepository
 templates = Jinja2Templates(
     directory=os.path.join(os.path.dirname(__file__), "../../templates"))
 
+
+def _status_pt(value) -> str:
+    labels = {
+        "ACTIVE": "Ativo",
+        "SOLD": "Vendido",
+        "DECEASED": "Falecido",
+        "TRANSFERRED": "Transferido",
+    }
+    key = value.value if hasattr(value, "value") else str(value)
+    return labels.get(key, key)
+
+
+def _format_date(value) -> str:
+    if not value:
+        return "-"
+    return value.strftime("%d/%m/%Y")
+
+
+templates.env.filters["status_pt"] = _status_pt
+templates.env.filters["format_date"] = _format_date
+
 router = APIRouter(
     tags=["Web"],
     responses={404: {"description": "Not found"}},
