@@ -22,6 +22,18 @@ class CattleDomain:
     def get_cattle_count(self) -> dict:
         return {"total_count": self._repo.count()}
 
+    def get_births_by_month(self, year: int) -> dict:
+        rows = self._repo.count_births_by_month(year)
+        male = [0] * 12
+        female = [0] * 12
+        for month, gender, count in rows:
+            index = int(month) - 1
+            if gender == GenderEnum.MALE:
+                male[index] = count
+            else:
+                female[index] = count
+        return {"male": male, "female": female}
+
     def create_cattle(self, data: CattleCreate) -> Cattle:
         self._validate_parent(data.mother_id, GenderEnum.FEMALE, "mãe")
         self._validate_parent(data.father_id, GenderEnum.MALE, "pai")

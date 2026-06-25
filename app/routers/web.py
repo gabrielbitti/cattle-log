@@ -1,3 +1,4 @@
+import datetime
 import os
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -6,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database.db import get_db
+from app.domain.cattle_domain import CattleDomain
 from app.models.cattle import GenderEnum
 from app.repositories.cattle import CattleRepository
 from app.repositories.cattle_health import CattleHealthRepository
@@ -26,11 +28,19 @@ async def read_root(request: Request, db: Session = Depends(get_db)):
     cow_count = sum(1 for c in all_cattle if c.gender == GenderEnum.FEMALE)
     bull_count = sum(1 for c in all_cattle if c.gender == GenderEnum.MALE)
 
+    current_year = datetime.date.today().year
+    domain = CattleDomain(db)
+    births_by_month = domain.get_births_by_month(current_year)
+    births_this_year = sum(births_by_month["male"]) + sum(births_by_month["female"])
+
     return templates.TemplateResponse("index.html", {
         "request": request,
         "cattle_count": len(all_cattle),
         "cow_count": cow_count,
         "bull_count": bull_count,
+        "births_by_month": births_by_month,
+        "births_this_year": births_this_year,
+        "current_year": current_year,
     })
 
 

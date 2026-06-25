@@ -10,44 +10,44 @@
                 <h3 id="cattle-count">{{ cattle_count }}</h3>
             </div>
             <div class="stat-card">
-                <h3>Total de Vacas</h3>
+                <h3>Total de Fêmeas</h3>
                 <h3 id="cow-count">{{ cow_count }}</h3>
             </div>
             <div class="stat-card">
-                <h3>Total de Bois</h3>
+                <h3>Total de Machos</h3>
                 <h3 id="bull-count">{{ bull_count }}</h3>
             </div>
         </div>
     </section>
 
-    <section class="cattle-structure">
-        <div>
-            <h3>Estrutura do Rebanho</h3>
-        </div>
-        <br>
-        <div class="stats">
-            <div class="stat-card">
-                <h3>Bezerros</h3>
-                <h3 id="">?</h3>
-            </div>
-            <div class="stat-card">
-                <h3>Novilhas</h3>
-                <h3 id="">?</h3>
-            </div>
-            <div class="stat-card">
-                <h3>Garrotes</h3>
-                <h3 id="">?</h3>
-            </div>
-            <div class="stat-card">
-                <h3>Vacas</h3>
-                <h3 id="">?</h3>
-            </div>
-            <div class="stat-card">
-                <h3>Bois</h3>
-                <h3 id="">?</h3>
-            </div>
-        </div>
-    </section>
+{#    <section class="cattle-structure">#}
+{#        <div>#}
+{#            <h3>Estrutura do Rebanho</h3>#}
+{#        </div>#}
+{#        <br>#}
+{#        <div class="stats">#}
+{#            <div class="stat-card">#}
+{#                <h3>Bezerros</h3>#}
+{#                <h3 id="">?</h3>#}
+{#            </div>#}
+{#            <div class="stat-card">#}
+{#                <h3>Novilhas</h3>#}
+{#                <h3 id="">?</h3>#}
+{#            </div>#}
+{#            <div class="stat-card">#}
+{#                <h3>Garrotes</h3>#}
+{#                <h3 id="">?</h3>#}
+{#            </div>#}
+{#            <div class="stat-card">#}
+{#                <h3>Vacas</h3>#}
+{#                <h3 id="">?</h3>#}
+{#            </div>#}
+{#            <div class="stat-card">#}
+{#                <h3>Bois</h3>#}
+{#                <h3 id="">?</h3>#}
+{#            </div>#}
+{#        </div>#}
+{#    </section>#}
 
     <section class="births-by-month">
         <div class="stats">
@@ -60,8 +60,8 @@
      <section class="">
         <div class="stats">
             <div class="stat-card">
-                <h3>Nascimentos no ano (2026)</h3>
-                <h3 id="cattle-count">143</h3>
+                <h3>Nascimentos no ano ({{ current_year }})</h3>
+                <h3 id="births-this-year">{{ births_this_year }}</h3>
             </div>
             <div class="stat-card">
                 <h3>Média de idade do rebanho</h3>
@@ -81,7 +81,7 @@
         datasets: [
             {
                 label: 'Machos',
-                data: [4, 6, 3, 8, 5, 7, 2, 9, 4, 6, 3, 5],
+                data: {{ births_by_month.male | tojson }},
                 borderColor: 'rgb(0 121 204)',
                 backgroundColor: 'rgb(46 147 216)',
                 borderWidth: 0,
@@ -90,7 +90,7 @@
             },
             {
                 label: 'Fêmeas',
-                data: [5, 3, 7, 4, 9, 6, 8, 3, 6, 4, 7, 2],
+                data: {{ births_by_month.female | tojson }},
                 borderColor: 'rgb(230 117 142)',
                 backgroundColor: 'rgb(230 117 142)',
                 borderWidth: 0,
@@ -110,7 +110,7 @@
                 legend: { position: 'top' },
                 title: {
                     display: true,
-                    text: 'Nascimentos por mês em 2026'
+                    text: 'Nascimentos por mês em {{ current_year }}'
                 }
             }
         }
