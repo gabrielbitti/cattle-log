@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.database.db import get_db
 from app.domain.cattle_domain import CattleDomain
 from app.exceptions import EntityNotFoundError
-from app.schemas.cattle import Cattle, BirthCreate, CattleCreate, CattleCount, CattleUpdate
+from app.schemas.cattle import Cattle, CattleCreate, CattleCount, CattleUpdate
 
 router = APIRouter(
     tags=["Cattle"],
@@ -18,16 +18,6 @@ router = APIRouter(
 def create_cattle_endpoint(cattle: CattleCreate, db: Session = Depends(get_db)):
     try:
         return CattleDomain(db).create_cattle(data=cattle)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.post("/cattle/birth", response_model=Cattle, summary="Register a birth")
-def create_birth_endpoint(birth: BirthCreate, db: Session = Depends(get_db)):
-    try:
-        return CattleDomain(db).create_birth(data=birth)
-    except EntityNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

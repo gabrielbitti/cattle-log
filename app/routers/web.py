@@ -84,11 +84,6 @@ async def add_cattle_form(request: Request):
     return templates.TemplateResponse("cattle_form.html", {"request": request, "action": "create"})
 
 
-@router.get("/add-birth", response_class=HTMLResponse)
-async def add_birth_form(request: Request):
-    return templates.TemplateResponse("add_birth.html", {"request": request})
-
-
 @router.get("/cattle-list", response_class=HTMLResponse)
 async def list_cattle_page(request: Request, db: Session = Depends(get_db)):
     cattle_list = CattleRepository(db).get_all(limit=1000)
