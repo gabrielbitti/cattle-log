@@ -31,7 +31,9 @@
                 <td data-label="Identificação">{{ cattle.identification if cattle.identification else "-" }}</td>
                 <td data-label="Raça">{{ cattle.race.capitalize() }}</td>
                 <td data-label="Gênero">
-                    <span>{{ "Fêmea" if cattle.gender == "FEMALE" else "Macho" }}</span>
+                    <span class="badge-gender {% if cattle.gender == 'FEMALE' %}badge-female{% else %}badge-male{% endif %}">
+                        {{ "Fêmea" if cattle.gender == "FEMALE" else "Macho" }}
+                    </span>
                 </td>
                 <td data-label="Data Nascimento">{{ cattle.birth_date | format_date }}</td>
                 <td data-label="Status">{{ cattle.status | status_pt }}</td>
