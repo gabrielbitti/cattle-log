@@ -49,6 +49,7 @@
                 <td data-label="Animal">
                     {{ r.cattle.name }} (ID: {{ r.cattle_id }})
                     <br><a href="/cattle-timeline/{{ r.cattle_id }}" style="font-size: 0.8rem;">Ver timeline</a>
+                    <br><a href="/add-cattle-reproduction/{{ r.cattle_id }}" style="font-size: 0.8rem;">+ Adicionar Evento</a>
                 </td>
                 <td data-label="Evento">{{ r.event_type | event_type_pt }}</td>
                 <td data-label="Data">{{ r.event_date | format_date }}</td>

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app.exceptions import EntityNotFoundError
 from app.models.cattle import Cattle, GenderEnum
 from app.repositories.cattle import CattleRepository
+from app.repositories.cattle_reproduction import CattleReproductionRepository
 from app.schemas.cattle import CattleCreate, CattleUpdate, BirthCreate
 
 
@@ -65,6 +66,7 @@ class CattleDomain:
     def delete_cattle(self, cattle_id: int) -> None:
         cattle = self.get_cattle_by_id(cattle_id)
         self._repo.soft_delete(cattle)
+        CattleReproductionRepository(self._repo.db).soft_delete_by_cattle(cattle_id)
 
     def update_cattle(self, cattle_id: int, data: CattleUpdate) -> Cattle:
         db_cattle = self.get_cattle_by_id(cattle_id)

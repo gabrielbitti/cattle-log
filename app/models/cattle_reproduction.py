@@ -28,6 +28,7 @@ class CattleReproduction(Base):
     notes = Column(String, nullable=True)
     created_at = Column(Date, default=datetime.date.today, nullable=False)
     updated_at = Column(Date, onupdate=datetime.date.today, nullable=True)
+    deleted_at = Column(Date, nullable=True)
 
     cattle = relationship("Cattle", foreign_keys=[cattle_id], lazy="select")
     partner = relationship("Cattle", foreign_keys=[partner_id], lazy="select")

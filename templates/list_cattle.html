@@ -38,10 +38,10 @@
                 <td data-label="Criado em">{{ cattle.created_at | format_date }}</td>
                 <td data-label="Ações">
                     <a class="btn-edit" href="/cattle/edit/{{ cattle.id }}">Editar</a>
+                    <a href="/add-cattle-reproduction/{{ cattle.id }}">Reprodução</a>
                     <button class="btn-delete" data-id="{{ cattle.id }}" data-name="{{ cattle.name }}">Excluir</button>
 {#                    <a href="/add-cattle-weight/{{ cattle.id }}">Evoluir Peso</a>#}
 {#                    <a href="/add-cattle-health/{{ cattle.id }}">Saúde</a>#}
-                    <a href="/add-cattle-reproduction/{{ cattle.id }}">Reprodução</a>
                 </td>
             </tr>
             {% endfor %}
