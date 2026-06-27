@@ -194,7 +194,8 @@ async def cattle_reproduction_list(request: Request, cattle_id: str = None, db: 
             pass
 
     repo = CattleReproductionRepository(db)
-    cattle_list = CattleRepository(db).get_all()
+    all_cattle = CattleRepository(db).get_all()
+    cattle_list = [c for c in all_cattle if c.gender == GenderEnum.FEMALE]
     repro_records = repo.get_all_by_cattle(parsed_cattle_id) if parsed_cattle_id else repo.get_all()
 
     return templates.TemplateResponse("cattle_reproduction_list.html", {

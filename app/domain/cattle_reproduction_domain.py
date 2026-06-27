@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.domain.cattle_domain import CattleDomain
 from app.exceptions import EntityNotFoundError
+from app.models.cattle import GenderEnum
 from app.models.cattle_reproduction import CattleReproduction, ReproductiveEventEnum
 from app.repositories.cattle import CattleRepository
 from app.repositories.cattle_reproduction import CattleReproductionRepository
@@ -35,6 +36,9 @@ class CattleReproductionDomain:
         mother = self._cattle_repo.get_by_id(data.cattle_id)
         if mother is None:
             raise EntityNotFoundError(f"Animal com ID {data.cattle_id} não encontrado.")
+
+        if mother.gender != GenderEnum.FEMALE:
+            raise ValueError("Eventos reprodutivos só podem ser registrados para animais fêmeas.")
 
         if data.partner_id and self._cattle_repo.get_by_id(data.partner_id) is None:
             raise EntityNotFoundError(f"Touro com ID {data.partner_id} não encontrado.")
