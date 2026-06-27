@@ -38,10 +38,12 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_cattle_reproduction_id'), 'cattle_reproduction', ['id'], unique=False)
+    op.create_index(op.f('ix_cattle_reproduction_cattle_id'), 'cattle_reproduction', ['cattle_id'], unique=False)
 
 
 def downgrade() -> None:
     """Downgrade schema."""
+    op.drop_index(op.f('ix_cattle_reproduction_cattle_id'), table_name='cattle_reproduction')
     op.drop_index(op.f('ix_cattle_reproduction_id'), table_name='cattle_reproduction')
     op.drop_table('cattle_reproduction')
     op.execute("DROP TYPE reproductive_event_enum;")

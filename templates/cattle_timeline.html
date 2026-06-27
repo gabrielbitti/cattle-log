@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Timeline Reprodutiva — {{ cattle.name }} - Auditoria de Rebanho{% endblock %}
+
+{% block head_extra %}
+<style>
+    .timeline {
+        position: relative;
+        padding: 1rem 0;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 1.5rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e5e5ea;
+    }
+    .timeline-event {
+        position: relative;
+        margin-left: 3.5rem;
+        margin-bottom: 1.5rem;
+        background: #fff;
+        border-radius: 12px;
+        padding: 1.2rem 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        border-left: 4px solid #ccc;
+    }
+    .timeline-event::before {
+        content: '';
+        position: absolute;
+        left: -2.6rem;
+        top: 1.2rem;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 2px #ccc;
+        background: #fff;
+    }
+    .timeline-event.mating      { border-left-color: #007aff; }
+    .timeline-event.mating::before { box-shadow: 0 0 0 2px #007aff; }
+    .timeline-event.pregnancy   { border-left-color: #ff9500; }
+    .timeline-event.pregnancy::before { box-shadow: 0 0 0 2px #ff9500; }
+    .timeline-event.birth       { border-left-color: #34c759; }
+    .timeline-event.birth::before { box-shadow: 0 0 0 2px #34c759; }
+    .timeline-event.abortion    { border-left-color: #ff3b30; }
+    .timeline-event.abortion::before { box-shadow: 0 0 0 2px #ff3b30; }
+    .timeline-event.weaning     { border-left-color: #8e8e93; }
+    .timeline-event.weaning::before { box-shadow: 0 0 0 2px #8e8e93; }
+
+    .event-badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+    .badge-mating    { background: #007aff; }
+    .badge-pregnancy { background: #ff9500; }
+    .badge-birth     { background: #34c759; }
+    .badge-abortion  { background: #ff3b30; }
+    .badge-weaning   { background: #8e8e93; }
+
+    .event-date {
+        font-size: 0.8rem;
+        color: #8e8e93;
+        margin-bottom: 0.5rem;
+    }
+    .event-detail {
+        font-size: 0.9rem;
+        color: #3a3a3c;
+        margin-top: 0.3rem;
+    }
+    .event-actions {
+        margin-top: 0.8rem;
+        font-size: 0.85rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <h2 style="margin: 0;">Timeline Reprodutiva — {{ cattle.name }}</h2>
+        <span style="color: #8e8e93; font-size: 0.9rem;">
+            ID: {{ cattle.id }} &bull; {{ "Fêmea" if cattle.gender == "FEMALE" else "Macho" }} &bull; {{ cattle.race.capitalize() }}
+        </span>
+    </div>
+
+    <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="/cattle-reproduction-list?cattle_id={{ cattle.id }}">Ver lista de eventos</a>
+        <a href="/add-cattle-reproduction/{{ cattle.id }}" class="btn-add" style="font-size: 0.9rem;">+ Adicionar Evento</a>
+    </div>
+
+    {% if events %}
+    <div class="timeline">
+        {% for ev in events %}
+        {% set css_class = {
+            'MATING': 'mating',
+            'PREGNANCY_CHECK': 'pregnancy',
+            'BIRTH': 'birth',
+            'ABORTION': 'abortion',
+            'WEANING': 'weaning'
+        }[ev.event_type.value] %}
+        {% set badge_class = 'badge-' + css_class %}
+
+        <div class="timeline-event {{ css_class }}">
+            <span class="event-badge {{ badge_class }}">{{ ev.event_type | event_type_pt }}</span>
+            <div class="event-date">{{ ev.event_date | format_date }}</div>
+
+            {% if ev.event_type.value == 'MATING' %}
+                <div class="event-detail">
+                    Touro: <strong>{{ ev.partner.name ~ ' (ID: ' ~ ev.partner_id ~ ')' if ev.partner else 'Não informado' }}</strong>
+                </div>
+            {% elif ev.event_type.value == 'PREGNANCY_CHECK' %}
+                <div class="event-detail">
+                    Resultado:
+                    {% if ev.pregnancy_confirmed is not none %}
+                        <strong>{{ "Prenhez Confirmada" if ev.pregnancy_confirmed else "Negativo" }}</strong>
+                    {% else %}
+                        <strong>Não informado</strong>
+                    {% endif %}
+                </div>
+                {% if ev.expected_birth_date %}
+                <div class="event-detail">Data prevista do parto: <strong>{{ ev.expected_birth_date | format_date }}</strong></div>
+                {% endif %}
+            {% elif ev.event_type.value == 'BIRTH' %}
+                {% if ev.offspring %}
+                <div class="event-detail">
+                    Cria: <strong>{{ ev.offspring.name }} (ID: {{ ev.offspring_id }})</strong>
+                    — {{ "Fêmea" if ev.offspring.gender == "FEMALE" else "Macho" }}
+                </div>
+                {% endif %}
+                {% if ev.partner %}
+                <div class="event-detail">Touro pai: <strong>{{ ev.partner.name }}</strong></div>
+                {% endif %}
+            {% elif ev.event_type.value == 'ABORTION' %}
+                <div class="event-detail">Aborto registrado</div>
+            {% elif ev.event_type.value == 'WEANING' %}
+                <div class="event-detail">Desmame realizado</div>
+            {% endif %}
+
+            {% if ev.notes %}
+            <div class="event-detail" style="color: #636366; font-style: italic;">{{ ev.notes }}</div>
+            {% endif %}
+
+            <div class="event-actions">
+                <a href="/edit-cattle-reproduction/{{ ev.id }}">Editar</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Nenhum evento reprodutivo registrado para este animal ainda.</p>
+    {% endif %}
+
+    <p style="margin-top: 2rem;">
+        <a href="/cattle-reproduction-list">← Voltar para lista geral</a>
+    </p>
+</section>
+{% endblock %}

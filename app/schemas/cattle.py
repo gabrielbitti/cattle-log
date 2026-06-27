@@ -59,6 +59,7 @@ class BirthCreate(BaseModel):
     mother_id: int = Field(None, gt=0)
     father_id: Optional[int] = Field(None, gt=0)
     race: Optional[str] = None
+    identification: Optional[str] = None
     notes: Optional[str] = None
 
 

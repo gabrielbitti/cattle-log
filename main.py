@@ -4,7 +4,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.routers import cattle, cattle_health, cattle_weight, web
+from app.routers import cattle, cattle_health, cattle_weight, cattle_reproduction, web
 
 app = FastAPI(title="Sistema de Auditoria de Rebanho")
 
@@ -16,6 +16,7 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 app.include_router(cattle.router)
 app.include_router(cattle_health.router)
 app.include_router(cattle_weight.router)
+app.include_router(cattle_reproduction.router)
 app.include_router(web.router)
 
 if __name__ == '__main__':

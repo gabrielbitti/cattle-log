@@ -51,6 +51,7 @@ class CattleDomain:
         calf_race = data.race if data.race else mother.race
         instance = Cattle(
             name=data.name,
+            identification=data.identification,
             race=calf_race,
             gender=data.gender,
             birth_date=data.birth_date,

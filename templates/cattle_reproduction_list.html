@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Reprodução - Auditoria de Rebanho{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <h2>Registros Reprodutivos</h2>
+
+    <div class="filter-section" style="margin-bottom: 2rem;">
+        <form method="GET" action="/cattle-reproduction-list" style="display: flex; gap: 1rem; align-items: end; flex-wrap: wrap;">
+            <div>
+                <label for="cattle_id">Filtrar por Animal:</label>
+                <select id="cattle_id" name="cattle_id">
+                    <option value="">Todos os animais</option>
+                    {% for c in cattle_list %}
+                    <option value="{{ c.id }}" {% if selected_cattle_id == c.id %}selected{% endif %}>
+                        {{ c.name }} (ID: {{ c.id }})
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Filtrar</button>
+            <a href="/cattle-reproduction-list" style="text-decoration: none;">
+                <button type="button">Limpar Filtros</button>
+            </a>
+        </form>
+    </div>
+
+    {% if repro_records %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Animal</th>
+                <th>Evento</th>
+                <th>Data</th>
+                <th>Touro</th>
+                <th>Cria</th>
+                <th>Prenhez</th>
+                <th>Prev. Parto</th>
+                <th>Observações</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in repro_records %}
+            <tr>
+                <td data-label="ID">{{ r.id }}</td>
+                <td data-label="Animal">
+                    {{ r.cattle.name }} (ID: {{ r.cattle_id }})
+                    <br><a href="/cattle-timeline/{{ r.cattle_id }}" style="font-size: 0.8rem;">Ver timeline</a>
+                </td>
+                <td data-label="Evento">{{ r.event_type | event_type_pt }}</td>
+                <td data-label="Data">{{ r.event_date | format_date }}</td>
+                <td data-label="Touro">{{ r.partner.name if r.partner else "-" }}</td>
+                <td data-label="Cria">{{ r.offspring.name if r.offspring else "-" }}</td>
+                <td data-label="Prenhez">
+                    {% if r.pregnancy_confirmed is not none %}
+                        {{ "Confirmada" if r.pregnancy_confirmed else "Negativa" }}
+                    {% else %}-{% endif %}
+                </td>
+                <td data-label="Prev. Parto">{{ r.expected_birth_date | format_date }}</td>
+                <td data-label="Observações">{{ r.notes if r.notes else "-" }}</td>
+                <td data-label="Ações">
+                    <a href="/edit-cattle-reproduction/{{ r.id }}">Editar</a>
+                    <button class="btn-delete" data-id="{{ r.id }}">Excluir</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>{% if selected_cattle_id %}Nenhum registro reprodutivo encontrado para este animal.{% else %}Nenhum registro reprodutivo cadastrado ainda.{% endif %}</p>
+    {% endif %}
+
+    <div class="actions" style="margin-top: 2rem;">
+        {% if selected_cattle_id %}
+        <a href="/add-cattle-reproduction/{{ selected_cattle_id }}" class="btn-add">Adicionar Evento</a>
+        <a href="/cattle-timeline/{{ selected_cattle_id }}" style="margin-left: 1rem;">Ver Timeline</a>
+        {% endif %}
+    </div>
+
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    document.querySelectorAll(".btn-delete").forEach(btn => {
+        btn.addEventListener("click", async () => {
+            const id = btn.dataset.id;
+            if (!confirm(`Excluir registro reprodutivo ID ${id}? Esta ação não pode ser desfeita.`)) return;
+
+            const response = await fetch(`/cattle-reproduction/${id}`, { method: "DELETE" });
+            if (response.ok) {
+                btn.closest("tr").remove();
+            } else {
+                const err = await response.json().catch(() => ({}));
+                alert(`Erro ao excluir: ${err.detail || response.status}`);
+            }
+        });
+    });
+</script>
+{% endblock %}
