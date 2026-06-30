@@ -2,17 +2,20 @@ import datetime
 import os
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.database.db import get_db
 from app.domain.cattle_domain import CattleDomain
+from app.domain.cattle_reproduction_domain import CattleReproductionDomain
 from app.models.cattle import GenderEnum
+from app.models.cattle_reproduction import ReproductiveEventEnum
 from app.repositories.cattle import CattleRepository
 from app.repositories.cattle_health import CattleHealthRepository
 from app.repositories.cattle_reproduction import CattleReproductionRepository
 from app.repositories.cattle_weight import CattleWeightRepository
+from app.schemas.cattle_reproduction import CattleReproductionCreate
 
 templates = Jinja2Templates(
     directory=os.path.join(os.path.dirname(__file__), "../../templates"))
@@ -249,6 +252,42 @@ async def cattle_timeline(request: Request, cattle_id: int, db: Session = Depend
         "cattle": cattle_data,
         "events": events,
     })
+
+
+def _age_months(birth_date: datetime.date, today: datetime.date) -> int:
+    months = (today.year - birth_date.year) * 12 + (today.month - birth_date.month)
+    if today.day < birth_date.day:
+        months -= 1
+    return max(months, 0)
+
+
+@router.get("/upcoming-weanings", response_class=HTMLResponse)
+async def upcoming_weanings(request: Request, db: Session = Depends(get_db)):
+    calves = CattleRepository(db).get_pending_weanings()
+    today = datetime.date.today()
+    calves_with_age = [
+        {"cattle": c, "age_months": _age_months(c.birth_date, today)}
+        for c in calves
+    ]
+    return templates.TemplateResponse("upcoming_weanings.html", {
+        "request": request,
+        "calves": calves_with_age,
+    })
+
+
+@router.post("/register-weaning/{calf_id}")
+async def register_weaning(calf_id: int, db: Session = Depends(get_db)):
+    calf = CattleRepository(db).get_by_id(calf_id)
+    if not calf or not calf.mother_id:
+        return RedirectResponse("/upcoming-weanings", status_code=302)
+    data = CattleReproductionCreate(
+        cattle_id=calf.mother_id,
+        event_type=ReproductiveEventEnum.WEANING,
+        event_date=datetime.date.today(),
+        offspring_id=calf.id,
+    )
+    CattleReproductionDomain(db).create(data)
+    return RedirectResponse("/upcoming-weanings", status_code=302)
 
 
 @router.get("/health")

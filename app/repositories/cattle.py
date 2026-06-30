@@ -1,8 +1,11 @@
+import calendar
 import datetime
+from datetime import date
 
-from sqlalchemy import extract, func
+from sqlalchemy import extract, func, select
 
 from app.models.cattle import Cattle, GenderEnum
+from app.models.cattle_reproduction import CattleReproduction, ReproductiveEventEnum
 from app.repositories.base import BaseRepository
 
 
@@ -54,6 +57,33 @@ class CattleRepository(BaseRepository[Cattle]):
             )
             .group_by("month", Cattle.gender)
             .order_by("month")
+            .all()
+        )
+
+    def get_pending_weanings(self) -> list[Cattle]:
+        today = date.today()
+        month = today.month - 7
+        year = today.year
+        if month <= 0:
+            month += 12
+            year -= 1
+        max_day = calendar.monthrange(year, month)[1]
+        cutoff = today.replace(year=year, month=month, day=min(today.day, max_day))
+
+        weaned_ids = select(CattleReproduction.offspring_id).where(
+            CattleReproduction.event_type == ReproductiveEventEnum.WEANING,
+            CattleReproduction.offspring_id.isnot(None),
+            CattleReproduction.deleted_at.is_(None),
+        )
+        return (
+            self.db.query(Cattle)
+            .filter(
+                Cattle.birth_date >= cutoff,
+                Cattle.birth_date.isnot(None),
+                Cattle.deleted_at.is_(None),
+                ~Cattle.id.in_(weaned_ids),
+            )
+            .order_by(Cattle.birth_date)
             .all()
         )
 

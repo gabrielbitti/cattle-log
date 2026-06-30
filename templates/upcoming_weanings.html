@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Próximos Desmames - Auditoria de Rebanho{% endblock %}
+
+{% block content %}
+<section class="content-section">
+    <h2>Próximos Desmames</h2>
+    <p style="color: #666; margin-bottom: 1.5rem;">
+        Bezerros com menos de 7 meses de idade sem registro de desmame.
+    </p>
+
+    {% if calves %}
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Identificação</th>
+                <th>Raça</th>
+                <th>Sexo</th>
+                <th>Nascimento</th>
+                <th>Idade</th>
+                <th>Mãe</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in calves %}
+            <tr>
+                <td data-label="ID">{{ item.cattle.id }}</td>
+                <td data-label="Nome">{{ item.cattle.name.capitalize() }}</td>
+                <td data-label="Identificação">{{ item.cattle.identification if item.cattle.identification else "-" }}</td>
+                <td data-label="Raça">{{ item.cattle.race.capitalize() }}</td>
+                <td data-label="Sexo">
+                    <span class="badge-gender {% if item.cattle.gender == 'FEMALE' %}badge-female{% else %}badge-male{% endif %}">
+                        {{ "Fêmea" if item.cattle.gender == "FEMALE" else "Macho" }}
+                    </span>
+                </td>
+                <td data-label="Nascimento">{{ item.cattle.birth_date | format_date }}</td>
+                <td data-label="Idade">
+                    {{ item.age_months }} {{ "mês" if item.age_months == 1 else "meses" }}
+                </td>
+                <td data-label="Mãe">
+                    {% if item.cattle.mother %}
+                        {{ item.cattle.mother.name.capitalize() }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td data-label="Ação">
+                    {% if item.cattle.mother_id %}
+                    <form method="POST" action="/register-weaning/{{ item.cattle.id }}" style="display:inline;">
+                        <button type="submit" class="btn-edit"
+                            onclick="return confirm('Registrar desmame de {{ item.cattle.name.capitalize() }}?')">
+                            Registrar Desmame
+                        </button>
+                    </form>
+                    {% else %}
+                    <button disabled title="Mãe não cadastrada" style="opacity:0.4; cursor:not-allowed;">
+                        Registrar Desmame
+                    </button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Nenhum bezerro pendente de desmame.</p>
+    {% endif %}
+</section>
+{% endblock %}
