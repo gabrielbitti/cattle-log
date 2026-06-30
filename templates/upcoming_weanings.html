@@ -6,7 +6,7 @@
 <section class="content-section">
     <h2>Próximos Desmames</h2>
     <p style="color: #666; margin-bottom: 1.5rem;">
-        Bezerros com menos de 7 meses de idade sem registro de desmame.
+        Bezerros com menos de 10 meses de idade sem registro de desmame.
     </p>
 
     {% if calves %}
@@ -56,7 +56,7 @@
                         </button>
                     </form>
                     {% else %}
-                    <button disabled title="Mãe não cadastrada" style="opacity:0.4; cursor:not-allowed;">
+                    <button class="btn" disabled title="Mãe não cadastrada" style="opacity:0.4; cursor:not-allowed;">
                         Registrar Desmame
                     </button>
                     {% endif %}

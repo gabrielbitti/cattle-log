@@ -62,7 +62,7 @@ class CattleRepository(BaseRepository[Cattle]):
 
     def get_pending_weanings(self) -> list[Cattle]:
         today = date.today()
-        month = today.month - 7
+        month = today.month - 10
         year = today.year
         if month <= 0:
             month += 12
